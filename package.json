@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.12.2",
+    "ethers": "^5.5.2",
     "quasar": "^2.3.4",
     "vue": "^3.2.23",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.12",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@quasar/vite-plugin": "^1.0.3",
