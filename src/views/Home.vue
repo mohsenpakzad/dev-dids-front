@@ -83,3 +83,8 @@ const issue = reactive({
     </q-card>
   </q-page>
 </template>
+<style scoped>
+* {
+  text-align: center;
+}
+</style>

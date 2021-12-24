@@ -21,8 +21,8 @@ import { ref } from 'vue'
                   <q-tab name="Verify"  label="Verify" class="drawer_tab"/>
                   <q-tab name="Issue"  label="Issue" class="drawer_tab"/>
                   <q-tab name="Create Vp"  label="Create Vp" class="drawer_tab"/>
-                </q-tabs
->
+                </q-tabs>
+
       </q-toolbar-title>
 
       <q-btn
@@ -82,12 +82,12 @@ import { ref } from 'vue'
   </q-layout>
 </template>
 
-<style>
+<style >
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /*text-align: center;*/
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
 }
 .drawer_tab {
