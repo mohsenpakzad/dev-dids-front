@@ -10,17 +10,19 @@ import { ref } from 'vue'
 
       <div>DevDIds</div>
 
-      <q-toolbar-title>
-        <!--        <q-tabs-->
-        <!--            stretch-->
-        <!--            v-model="tab"-->
-        <!--            inline-label-->
-        <!--            class="bg-purple text-white shadow-2"-->
-        <!--        >-->
-        <!--          <q-tab name="mails" icon="mail" label="Mails" />-->
-        <!--          <q-tab name="alarms" icon="alarm" label="Alarms" />-->
-        <!--          <q-tab name="movies" icon="movie" label="Movies" />-->
-        <!--        </q-tabs>-->
+      <q-toolbar-title >
+                <q-tabs
+
+                    v-model="tab"
+
+                    class="bg-white text-black"
+                    style="max-width: fit-content; text-align: center; margin: 10px auto 0 45%; border-radius: 20px"
+                >
+                  <q-tab name="Verify"  label="Verify" class="drawer_tab"/>
+                  <q-tab name="Issue"  label="Issue" class="drawer_tab"/>
+                  <q-tab name="Create Vp"  label="Create Vp" class="drawer_tab"/>
+                </q-tabs
+>
       </q-toolbar-title>
 
       <q-btn
@@ -87,5 +89,9 @@ import { ref } from 'vue'
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
+}
+.drawer_tab {
+  margin: 4px;
+  border-radius: 20px;
 }
 </style>
