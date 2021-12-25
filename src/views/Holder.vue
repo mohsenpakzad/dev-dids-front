@@ -100,15 +100,22 @@ export default {
 <template>
   <q-page
       class="row items-center justify-evenly"
-
   >
     <q-card
-        class="q-px-lg q-pb-lg"
+        class=" q-pb-lg"
         style="min-width: 50em; border-radius: 30px; max-width: 75%; margin-top: 70px"
         flat
         bordered
     >
-  <div class="q-pa-md">
+      <q-tabs
+
+          align="justify"
+          class="bg-grey-3"
+      >
+        <q-tab class="text-accent" name="Holder" icon="account_circle" label="Holder"  />
+
+      </q-tabs>
+    <div class="q-pa-md">
     <q-table
         title="Your Verifiable Credentials"
         :rows="rows"
@@ -163,7 +170,7 @@ export default {
         <q-btn
             :loading="progress[0].loading"
             :percentage="progress[0].percentage"
-            color="primary"
+            color="secondary"
             @click="startComputing(0);"
             style="width: 150px;"
         >
@@ -174,7 +181,7 @@ export default {
           </template>
         </q-btn>
         <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
-          <q-card class="my-card bg-deep-orange-3">
+          <q-card class="my-card bg-secondary">
             <q-card-section>
               <div class="text-h6">VP</div>
               <div class="text-subtitle2">Copy the info about your generated vp </div>
