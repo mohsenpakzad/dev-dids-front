@@ -8,7 +8,7 @@ import { ref } from 'vue'
 
     <q-toolbar>
 
-      <div>DevDIds</div>
+      <div>DevDIDs</div>
 
       <q-toolbar-title >
                 <q-tabs
@@ -84,7 +84,6 @@ import { ref } from 'vue'
 
 <style >
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /*text-align: center;*/
