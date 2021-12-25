@@ -49,7 +49,7 @@ const rows = [
 export default {
   setup () {
     const selected = ref([])
-
+    const persistent = ref(false)
     const progress = ref([
       { loading: false, percentage: 0 },
       { loading: false, percentage: 0 },
@@ -63,12 +63,14 @@ export default {
       progress.value[ id ].percentage = 0
 
       intervals[ id ] = setInterval(() => {
-        progress.value[ id ].percentage += Math.floor(Math.random() * 8 + 10)
+        progress.value[ id ].percentage += Math.floor(Math.random() * 10 + 10)
         if (progress.value[ id ].percentage >= 100) {
           clearInterval(intervals[ id ])
           progress.value[ id ].loading = false
+          this.persistent = true
         }
-      }, 700)
+      }, 500)
+
     }
 
     onBeforeUnmount(() => {
@@ -80,8 +82,10 @@ export default {
       progress,
       startComputing,
       filter: ref(''),
+      persistent,
       selected,
       columns,
+      confirm: ref(false),
       rows,
       getSelectedString () {
         return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rows.length}`
@@ -155,11 +159,12 @@ export default {
   </div>
 
       <div style="text-align: center">
+
         <q-btn
             :loading="progress[0].loading"
             :percentage="progress[0].percentage"
             color="primary"
-            @click="startComputing(0)"
+            @click="startComputing(0);"
             style="width: 150px;"
         >
           Generate VP
@@ -168,8 +173,42 @@ export default {
             Generating...
           </template>
         </q-btn>
+        <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
+          <q-card class="my-card bg-deep-orange-3">
+            <q-card-section>
+              <div class="text-h6">VP</div>
+              <div class="text-subtitle2">Copy the info about your generated vp </div>
+            </q-card-section>
 
-        <q-btn label="Delete" type="Delete" color="red"  style="margin-left: 5px"/>
+            <q-card-section>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </q-card-section>
+
+            <q-separator dark />
+
+            <q-card-actions align="center">
+              <q-btn flat label="OK" v-close-popup />
+            </q-card-actions>
+
+          </q-card>
+        </q-dialog>
+
+        <q-btn label="Delete" type="Delete" color="red" @click="confirm = true" style="margin-left: 5px"/>
+        <q-dialog v-model="confirm">
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon= "delete" color="deep-orange" text-color="white" />
+              <span class="q-ml-xs">Are you sure You want to delete these VCs?</span>
+            </q-card-section>
+
+
+            <q-card-actions align="center">
+              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn flat label="Delete" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
       </div>
     </q-card>
   </q-page>
