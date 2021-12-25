@@ -100,7 +100,7 @@ export default {
   >
     <q-card
         class="q-px-lg q-pb-lg"
-        style="min-width: 50em; border-radius: 30px; max-width: 70%; margin-top: 70px"
+        style="min-width: 50em; border-radius: 30px; max-width: 75%; margin-top: 70px"
         flat
         bordered
     >
