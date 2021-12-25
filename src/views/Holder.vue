@@ -42,7 +42,64 @@ const rows = [
     data: 24,
     validFrom: 4.0,
     validTo: 87,
-  }
+  },
+  {
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },{
+    name: 'Railway Project',
+    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
+    subject: 6.0,
+    data: "Shima has Worked 3 month",
+    validFrom: 4.0,
+    validTo: 87,
+  },
 
 ]
 
@@ -117,9 +174,13 @@ export default {
         <q-tab class="text-accent" name="Holder" icon="account_circle" label="Holder"  />
 
       </q-tabs>
+      <q-card-section class="div_issuer_header">
+        <q-icon name="branding_watermark" color="black"></q-icon>
+        Your Verifiable Credentials
+      </q-card-section>
     <div class="q-pa-md">
+
     <q-table
-        title="Your Verifiable Credentials"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -128,10 +189,9 @@ export default {
         :filter="filter"
         grid
         hide-header
-
     >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input  dense debounce="300" v-model="filter" placeholder="Search"  color="accent">
           <template v-slot:append>
             <q-icon name="search"  color="accent"/>
           </template>
@@ -226,4 +286,15 @@ export default {
 <style lang="sass">
 .grid-style-transition
   transition: transform .28s, background-color .28s
+</style>
+<style>
+.div_issuer_header {
+  margin: 30px 0px 0px 0px !important;
+  font-size: 1.71428571rem;
+  line-height: 1.28571429em;
+  font-weight: 500;
+  padding: 0;
+  text-align: center;
+}
+
 </style>
