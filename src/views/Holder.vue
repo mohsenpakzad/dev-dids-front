@@ -50,6 +50,7 @@ export default {
   setup () {
     const selected = ref([])
     const persistent = ref(false)
+    const tab =  ref('Holder')
     const progress = ref([
       { loading: false, percentage: 0 },
       { loading: false, percentage: 0 },
@@ -85,6 +86,7 @@ export default {
       persistent,
       selected,
       columns,
+      tab,
       confirm: ref(false),
       rows,
       getSelectedString () {
@@ -108,7 +110,7 @@ export default {
         bordered
     >
       <q-tabs
-
+          v-model="tab"
           align="justify"
           class="bg-grey-3"
       >
@@ -126,18 +128,19 @@ export default {
         :filter="filter"
         grid
         hide-header
+
     >
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
           <template v-slot:append>
-            <q-icon name="search" />
+            <q-icon name="search"  color="accent"/>
           </template>
         </q-input>
       </template>
 
       <template v-slot:item="props">
         <div
-            class="q-pa-xs grid-style-transition"
+            class="q-pa-lg grid-style-transition"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
@@ -204,14 +207,12 @@ export default {
         <q-dialog v-model="confirm">
           <q-card>
             <q-card-section class="row items-center">
-              <q-avatar icon= "delete" color="deep-orange" text-color="white" />
+              <q-avatar font-size="40px" icon= "delete_forever"  text-color="red" />
               <span class="q-ml-xs">Are you sure You want to delete these VCs?</span>
             </q-card-section>
-
-
             <q-card-actions align="center">
               <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn flat label="Delete" color="primary" v-close-popup />
+              <q-btn flat label="Delete" color="red" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
