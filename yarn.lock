@@ -1213,10 +1213,10 @@ pug@^3.0.2:
     pug-runtime "^3.0.1"
     pug-strip-comments "^2.0.0"
 
-quasar@^2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.3.4.tgz#cd622f84ad4fc9bd4c156d4a0e6f896e3e92d27b"
-  integrity sha512-VgqjuzlRqZU2t4gKDHQHc/gt9nKXi9y1VRM7xYO6VOuJcm48wgOzyBdTwl1vVseghWeEIEHRM9M+R629WWF9MQ==
+quasar@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-2.4.0.tgz#5e5d53e84fa72784a7ca24695e5cdb3e64f662d3"
+  integrity sha512-LwIqpI9Xz+rmmUCpwkg6rCI18WGvDhoOMdLI838xqJxtG8X5FqEI5rUV9QQl2QmsiMxrb0D+sAHznzrNtN2IyQ==
 
 readdirp@~3.6.0:
   version "3.6.0"
