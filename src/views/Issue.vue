@@ -66,6 +66,8 @@ const rows = ref([
 ])
 
 const dialog =  ref(false)
+const confirm =  ref(false)
+const prompt =  ref(false)
 
 
 </script>
@@ -207,29 +209,30 @@ const dialog =  ref(false)
               row-key="name"
             >
               <template v-slot:body="props">
-                <q-tr :props="props" class="revoked1" @click="dialog = true">
-                  <q-td key="address" :props="props" class="table_data">
+                <q-tr :props="props" class="revoked1">
+                  <q-td key="address" :props="props" class="table_data" @click="dialog = true">
                     {{ props.row.address }}
                   </q-td>
-                  <q-td key="subject" :props="props" class="table_data">
+                  <q-td key="subject" :props="props" class="table_data" @click="dialog = true">
                     <q-badge color="green" class="table_badge">
                       {{ props.row.subject }}
                     </q-badge>
                   </q-td>
-                  <q-td key="data" :props="props" class="table_data">
+                  <q-td key="data" :props="props" class="table_data" @click="dialog = true">
                     {{ props.row.data }}
                   </q-td>
                   <q-td key="more" :props="props" class="table_data">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="more_time" class="data_icon"/>
-                    <q-icon color="red" name="delete_forever" class="data_icon"/>
+                    <q-icon color="teal" name="more_time" class="data_icon" @click="prompt = true"/>
+                    <q-icon color="red" name="delete_forever" class="data_icon" @click="confirm = true"/>
                   </q-td>
                 </q-tr>
               </template>
             </q-table>
           </div>
-          <!-- Dialog Begins -->
+          <!-- Dialogs Begin -->
           <div class="q-pa-md">
+            <!-- Dialog Information Begins -->
             <q-dialog v-model="dialog">
               <q-card class="dialog_info">
                 <q-card-section class="items-center dialog_header_info">
@@ -261,7 +264,7 @@ const dialog =  ref(false)
                     <q-item-section avatar>
                       <q-icon rounded color="blue-grey-4" size="34px" name="title"/>
                     </q-item-section>
-                    <div class="dialog_info_items1">Title</div>
+                    <div class="dialog_info_items1">Subect</div>
                     <div class="dialog_info_items2">:</div>
                     <div class="dialog_info_items3">Employment</div>
                   </q-item>
@@ -302,8 +305,74 @@ const dialog =  ref(false)
                 </q-card-actions>
               </q-card>
             </q-dialog>
+            <!-- Dialog Information Ends -->
+
+            <!-- Dialog Revoke Begins -->
+            <q-dialog v-model="confirm">
+              <q-card>
+                <q-card-section class="row items-center">
+                  <q-avatar font-size="40px" icon= "delete_forever"  text-color="red" />
+                  <span class="q-ml-xs">Are you sure You want to delete this VC?</span>
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn flat label="Cancel" color="primary" v-close-popup />
+                  <q-btn flat label="Delete" color="red" v-close-popup />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <!-- Dialog Revoke Ends -->
+
+            <!-- Dialog Extend Begins -->
+            <q-dialog v-model="prompt">
+              <q-card style="min-width: 350px">
+                <q-card-section>
+                  <q-item>
+                    <q-item-section avatar>
+                      <!-- <q-icon rounded size="34px" name="more_time" color="teal"/> -->
+                      <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Validity</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">
+                      From
+                      <span style="color:green; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2021</span>
+                      To
+                      <span style="color:crimson; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2022</span>
+                    </div>
+                  </q-item>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    outlined
+                    v-model="newExp"
+                    label="New Expiration Date"
+                    mask="date"
+                    :rules="['date']"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="newExp">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat/>
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </q-card-section>
+
+                <q-card-actions align="right" class="text-primary">
+                  <q-btn flat label="Cancel" v-close-popup />
+                  <q-btn flat label="Extend" color="green-10" v-close-popup />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <!-- Dialog Extend Ends -->
           </div>
-          <!-- Dialog Ends -->
+          <!-- Dialogs End -->
         </q-card>
       </template>
 
