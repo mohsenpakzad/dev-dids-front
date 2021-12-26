@@ -22,6 +22,7 @@ const columns = [
 
 export default {
   setup () {
+    const VP = ref()
     const store = useStore()
     const selected = ref([])
     const persistent = ref(false)
@@ -34,12 +35,19 @@ export default {
     ])
 
     const intervals = [ null, null, null ]
-
-    function startComputing (id) {
+    function g(){
+      const toGenerate = []
+      for(let j = 0; j<selected.value.length ;j++){
+        toGenerate.push(selected.value[j].id)
+      }
+      return toGenerate
+    }
+    async function startComputing (id) {
+      const tg = await g()
+      console.log(tg)
       const devDIDs = store.getters.devDIDs
-      console.log(JSON.stringify(selected))
-      // const VP = await devDIDs.generateVp(selec)
-
+      this.VP = await devDIDs.generateVp(tg,1001,10000)
+      console.log("log1",VP.value.vcs[0]._hex)
 
       progress.value[ id ].loading = true
       progress.value[ id ].percentage = 0
@@ -54,15 +62,16 @@ export default {
       }, 500)
 
     }
+
     async function getUserVCs() {
 
       const devDIDs = store.getters.devDIDs
 
-      const VCIds = await devDIDs.vcsOfHolder(store.getters.account)
-      console.log(VCIds)
+      let VCIds = []
+      VCIds = await devDIDs.vcsOfHolder(store.getters.account)
+
       for(let i=0; i<VCIds.length;i++){
           try {
-
           const myVC = await devDIDs.getVc(VCIds[i])
           rows.value.push({...myVC, id: VCIds[i]})
           } catch (err){
@@ -93,6 +102,8 @@ export default {
       tab,
       confirm: ref(false),
       rows,
+      VP,
+      store,
       getSelectedString () {
         return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rows.length}`
       }
@@ -157,22 +168,7 @@ export default {
             <q-separator />
             <q-list dense>
               <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
-<!--                <q-item-section avatar v-if="col.label=='Subject'">-->
-<!--                  <q-icon rounded color="accent" size="15px" name="verified"/>-->
-<!--                </q-item-section>-->
-<!--                <q-item-section avatar v-if="col.label=='Data'">-->
-<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
-<!--                </q-item-section>-->
 
-<!--                <q-item-section avatar v-if="col.label=='Issuer'">-->
-<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
-<!--                </q-item-section>-->
-<!--                <q-item-section avatar v-if="col.label=='Issuance Date'">-->
-<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
-<!--                </q-item-section>-->
-<!--                <q-item-section avatar v-if="col.label=='Expiration Date'">-->
-<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
-<!--                </q-item-section>-->
 
                 <q-item-section>
 
@@ -190,58 +186,6 @@ export default {
               </q-item>
             </q-list>
 
-<!--            <q-list class="shadow-2 rounded-borders" style="margin:0 auto 0;width:100%;">-->
-<!--              &lt;!&ndash; Issuer Begins &ndash;&gt;-->
-<!--              <q-item>-->
-<!--                <q-item-section avatar>-->
-<!--                  <q-icon rounded color="teal-5" size="34px" name="verified"/>-->
-<!--                </q-item-section>-->
-<!--                <div class="dialog_info_items4">Issuer</div>-->
-<!--                <div class="dialog_info_items5">:</div>-->
-<!--                <div class="dialog_info_items6">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>-->
-<!--              </q-item>-->
-<!--              &lt;!&ndash; Issuer Ends &ndash;&gt;-->
-
-<!--              <q-separator inset/>-->
-
-<!--              &lt;!&ndash; Subject Begins &ndash;&gt;-->
-<!--              <q-item>-->
-<!--                <q-item-section avatar>-->
-<!--                  <q-icon rounded color="blue-grey-4" size="34px" name="title"/>-->
-<!--                </q-item-section>-->
-<!--                <div class="dialog_info_items4">Subject</div>-->
-<!--                <div class="dialog_info_items5">:</div>-->
-<!--                <div class="dialog_info_items6">Employment</div>-->
-<!--              </q-item>-->
-<!--              &lt;!&ndash; Subject Ends &ndash;&gt;-->
-
-<!--              <q-separator inset/>-->
-
-<!--              &lt;!&ndash; Data Begins &ndash;&gt;-->
-<!--              <q-item>-->
-<!--                <q-item-section avatar>-->
-<!--                  <q-icon rounded color="green-6" size="34px" name="edit_note"/>-->
-<!--                </q-item-section>-->
-<!--                <div class="dialog_info_items4">Data</div>-->
-<!--                <div class="dialog_info_items5">:</div>-->
-<!--                <div class="dialog_info_items6">0xF28122CA</div>-->
-<!--              </q-item>-->
-<!--              &lt;!&ndash; Data Ends &ndash;&gt;-->
-
-<!--              <q-separator inset/>-->
-
-<!--              &lt;!&ndash; Date Begins &ndash;&gt;-->
-<!--              <q-item>-->
-<!--                <q-item-section avatar>-->
-<!--                  <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>-->
-<!--                </q-item-section>-->
-<!--                <div class="dialog_info_items4">Validity</div>-->
-<!--                <div class="dialog_info_items5">:</div>-->
-<!--                <div class="dialog_info_items6">From 26/12/2021 To 26/12/2022</div>-->
-<!--              </q-item>-->
-<!--              &lt;!&ndash; Date Ends &ndash;&gt;-->
-
-<!--            </q-list>-->
           </q-card>
         </div>
 
@@ -283,7 +227,7 @@ export default {
 
                     <div class="dialog_info_items1">Holder</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>
+                    <div class="dialog_info_items3">{{store.valueOf().getters.account}}</div>
                   </q-item>
                   <!-- Holder Ends -->
 
@@ -296,22 +240,12 @@ export default {
                     </q-item-section>
                     <div class="dialog_info_items1">User VCs</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3"> VC1, VC2, VC3</div>
+                    <div class="dialog_info_items3" ><span v-for="vc in VP.valueOf().vcs">{{vc._hex}}, </span></div>
                   </q-item>
                   <!-- Subject Ends -->
 
                   <q-separator inset/>
 
-                  <!-- Data Begins -->
-                  <q-item>
-                    <q-item-section avatar>
-                      <q-icon rounded color="green-6" size="34px" name="edit_note"/>
-                    </q-item-section>
-                    <div class="dialog_info_items1">Data</div>
-                    <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">0xF28122CA</div>
-                  </q-item>
-                  <!-- Data Ends -->
 
                   <q-separator inset/>
 
@@ -322,7 +256,7 @@ export default {
                     </q-item-section>
                     <div class="dialog_info_items1">Validity</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">From 26/12/2021 To 26/12/2022</div>
+                    <div class="dialog_info_items3">From {{VP.valueOf().validFrom}} To {{VP.valueOf().validTo}}</div>
                   </q-item>
                   <!-- Date Ends -->
 
