@@ -108,7 +108,7 @@ const tab =  ref('verifies')
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="text-white bg-red">
-            Unfortunately! This Verifiable Presentation is not Valid. The reason is that ....
+            Unfortunately! This Verifiable Presentation is not Valid. Verifiable Presentation's date is expired.
 
             <template v-slot:action>
               <q-btn flat label="Dismiss" />
