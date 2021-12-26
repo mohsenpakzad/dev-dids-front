@@ -95,6 +95,9 @@ const tab =  ref('verifies')
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner class="bg-grey-3">
+          <template v-slot:avatar>
+            <q-icon name="verified" color="primary" />
+          </template>
             This Verifiable Presentation is valid
 
           <template v-slot:action>
