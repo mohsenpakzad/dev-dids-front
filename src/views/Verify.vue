@@ -92,7 +92,7 @@ const tab =  ref('verifies')
             <q-btn label="Verify" type="submit" icon="done_all" color="secondary"/>
           </div>
         </q-form>
-
+<!-- 
         <div class="q-pa-md q-gutter-sm">
           <q-banner class="bg-grey-3">
             <template v-slot:avatar>
@@ -104,7 +104,7 @@ const tab =  ref('verifies')
               <q-btn flat label="Dismiss" />
             </template>
           </q-banner>
-        </div>
+        </div> -->
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="text-white bg-red">
