@@ -312,7 +312,7 @@ const prompt =  ref(false)
               <q-card>
                 <q-card-section class="row items-center">
                   <q-avatar font-size="40px" icon= "delete_forever"  text-color="red" />
-                  <span class="q-ml-xs">Are you sure You want to delete this VC?</span>
+                  <span class="q-ml-xs">Are you sure You want to revoke this VC?</span>
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup />
