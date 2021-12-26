@@ -6,7 +6,7 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'VC',
+    label: 'Subject',
     align: 'left',
     field: row => row.name,
     format: val => `${val}`,
@@ -43,63 +43,7 @@ const rows = [
     validFrom: 4.0,
     validTo: 87,
   },
-  {
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },
+
 
 ]
 
@@ -162,7 +106,7 @@ export default {
   >
     <q-card
         class=" q-pb-lg"
-        style="min-width: 50em; border-radius: 30px; max-width: 75%; margin-top: 70px"
+        style="min-width: 50em; border-radius: 30px; max-width: 80%; margin-top: 20px"
         flat
         bordered
     >
@@ -175,7 +119,7 @@ export default {
 
       </q-tabs>
       <q-card-section class="div_issuer_header">
-        <q-icon name="branding_watermark" color="black"></q-icon>
+        <q-icon name="badge" color="accent"></q-icon>
         Your Verifiable Credentials
       </q-card-section>
     <div class="q-pa-md">
@@ -210,8 +154,32 @@ export default {
             <q-separator />
             <q-list dense>
               <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+<!--                <q-item-section avatar v-if="col.label=='Subject'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="verified"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Data'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+
+<!--                <q-item-section avatar v-if="col.label=='Issuer'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Issuance Date'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Expiration Date'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+
                 <q-item-section>
-                  <q-item-label>{{ col.label }}</q-item-label>
+
+                  <q-item-label >
+                    <q-icon rounded color="blue-grey-4"  size="25px" name="title" v-if="col.label=='Data'"/>
+                    <q-icon rounded color="teal-5" size="25px" name="verified" v-else-if="col.label=='Issuer'"/>
+                    <q-icon rounded color="accent" size="25px" name="subject" v-else-if="col.label=='Subject'"/>
+                    <q-icon rounded color="green-6" size="25px" name="today" v-else-if="col.label=='Issuance Date'"/>
+                    <q-icon rounded style="color:#F31E48" size="25px" name="today" v-if="col.label=='Expiration Date'"/>
+                    {{ col.label }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label caption>{{ col.value }}</q-item-label>
@@ -219,6 +187,58 @@ export default {
               </q-item>
             </q-list>
 
+<!--            <q-list class="shadow-2 rounded-borders" style="margin:0 auto 0;width:100%;">-->
+<!--              &lt;!&ndash; Issuer Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="teal-5" size="34px" name="verified"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Issuer</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Issuer Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Subject Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="blue-grey-4" size="34px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Subject</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">Employment</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Subject Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Data Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="green-6" size="34px" name="edit_note"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Data</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">0xF28122CA</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Data Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Date Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Validity</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">From 26/12/2021 To 26/12/2022</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Date Ends &ndash;&gt;-->
+
+<!--            </q-list>-->
           </q-card>
         </div>
 
@@ -244,24 +264,76 @@ export default {
           </template>
         </q-btn>
         <q-dialog v-model="persistent" persistent transition-show="scale" transition-hide="scale">
-          <q-card class="my-card bg-secondary">
-            <q-card-section>
-              <div class="text-h6">VP</div>
-              <div class="text-subtitle2">Copy the info about your generated vp </div>
-            </q-card-section>
 
-            <q-card-section>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </q-card-section>
+              <q-card class="dialog_info">
+                <q-card-section class="items-center dialog_header_info">
+                  <q-avatar size="50px" font-size="28px" color="warning" icon="info" text-color="white" class="avatar_info"/>
+                  <span class="q-ml-sm header_info">Information of the VP</span>
+                </q-card-section>
 
-            <q-separator dark />
+                <q-list class="shadow-2 rounded-borders" style="margin:0 auto 0;width:95%;">
+                  <!-- Holder Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="teal" size="34px" name="manage_accounts"/>
+                    </q-item-section>
 
-            <q-card-actions align="center">
-              <q-btn flat label="OK" v-close-popup />
-            </q-card-actions>
+                    <div class="dialog_info_items1">Holder</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>
+                  </q-item>
+                  <!-- Holder Ends -->
 
-          </q-card>
-        </q-dialog>
+                  <q-separator inset/>
+
+                  <!-- Subject Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="blue-grey-4" size="34px" name="title"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">User VCs</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3"> VC1, VC2, VC3</div>
+                  </q-item>
+                  <!-- Subject Ends -->
+
+                  <q-separator inset/>
+
+                  <!-- Data Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="green-6" size="34px" name="edit_note"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Data</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">0xF28122CA</div>
+                  </q-item>
+                  <!-- Data Ends -->
+
+                  <q-separator inset/>
+
+                  <!-- Date Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Validity</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">From 26/12/2021 To 26/12/2022</div>
+                  </q-item>
+                  <!-- Date Ends -->
+
+                </q-list>
+
+
+                <!-- Notice v-close-popup -->
+                <q-card-actions align="right">
+                  <q-btn flat label="Close" color="primary" v-close-popup />
+                </q-card-actions>
+              </q-card>
+
+            </q-dialog>
+
 
         <q-btn label="Delete" type="Delete" color="red" @click="confirm = true" style="margin-left: 5px"/>
         <q-dialog v-model="confirm">
@@ -297,4 +369,85 @@ export default {
   text-align: center;
 }
 
+
+.dialog_info_items1, .dialog_info_items2,
+.dialog_info_items3
+{
+  min-width:40px;
+  text-align:left !important;
+  font-size:15px;
+  display:table-cell !important;
+  padding-top:10px;
+
+}
+
+.dialog_info_items1
+{
+  width:13% !important;
+  min-width:50px !important;
+}
+
+.dialog_info_items2
+{
+  width:1% !important;
+}
+
+.dialog_info_items3
+{
+  width:70% !important;
+}
+
+.dialog_header_info
+{
+  background-color:#F0E68E !important;
+  margin-bottom:5px;
+}
+
+.avatar_info
+{
+  display:block !important;
+  margin:0 auto 10px !important;
+}
+
+.header_info
+{
+  display:block !important;
+  font-size:18px !important;
+  text-align: center;
+}
+
+.dialog_info
+{
+  width:95% !important;
+  max-width:600px !important;
+}
+
+
+.dialog_info_items4
+{
+  position:relative;
+  top:6px;
+  font-size:14px !important;
+  font-weight:500;
+  width:13% !important;
+  min-width:50px !important;
+}
+
+.dialog_info_items5
+{
+  position:relative;
+  top:6px;
+  font-size:14px !important;
+  font-weight:500;
+  width:3% !important;
+}
+
+.dialog_info_items6
+{
+  position:relative;
+  top:9px;
+  font-size:12px !important;
+  font-weight:400;
+  width:70% !important;
+}
 </style>

@@ -35,13 +35,13 @@ const tab =  ref('verifies')
         align="justify"
         class="bg-grey-3"
       >
-        <q-tab class="text-green" name="verifies" icon="check_circle" label="Verify" style="padding:10px 0px 10px 0px !important;"/>
+        <q-tab class="text-green" name="verifies" icon="verified" label="Verify" style="padding:10px 0px 10px 0px !important;"/>
 
       </q-tabs>
 
       <template v-if="tab==='verifies'">
         <q-card-section class="div_issuer_header">
-          <q-icon color="green" name="check_circle"/>
+          <q-icon color="green" name="how_to_reg"/>
           Verify
         </q-card-section>
 
@@ -92,16 +92,29 @@ const tab =  ref('verifies')
             <q-btn label="Verify" type="submit" icon="done_all" color="secondary"/>
           </div>
         </q-form>
+<!-- 
+        <div class="q-pa-md q-gutter-sm">
+          <q-banner class="bg-grey-3">
+            <template v-slot:avatar>
+              <q-icon name="verified" color="primary" />
+            </template>
+              This Verifiable Presentation is valid
+
+            <template v-slot:action>  
+              <q-btn flat label="Dismiss" />
+            </template>
+          </q-banner>
+        </div> -->
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="text-white bg-red">
-            Unfortunately! This Verifiable Presentation is not Valid. The reason is that ....
+            Unfortunately! This Verifiable Presentation is not Valid. Its date is expired.
 
-          <template v-slot:action>
-            <q-btn flat label="Dismiss" />
-        </template>
-        </q-banner>
-  </div>
+            <!-- <template v-slot:action>
+              <q-btn flat label="Dismiss" />
+            </template> -->
+          </q-banner>
+        </div>
 
       </template>
 
