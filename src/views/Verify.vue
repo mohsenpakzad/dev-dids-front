@@ -95,14 +95,14 @@ const tab =  ref('verifies')
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner class="bg-grey-3">
-          <template v-slot:avatar>
-            <q-icon name="verified" color="primary" />
-          </template>
-            This Verifiable Presentation is valid
+            <template v-slot:avatar>
+              <q-icon name="verified" color="primary" />
+            </template>
+              This Verifiable Presentation is valid
 
-          <template v-slot:action>
-            <q-btn flat label="Dismiss" />
-          </template>
+            <template v-slot:action>  
+              <q-btn flat label="Dismiss" />
+            </template>
           </q-banner>
         </div>
 
@@ -110,11 +110,11 @@ const tab =  ref('verifies')
           <q-banner inline-actions rounded class="text-white bg-red">
             Unfortunately! This Verifiable Presentation is not Valid. The reason is that ....
 
-          <template v-slot:action>
-            <q-btn flat label="Dismiss" />
-          </template>
-        </q-banner>
-  </div>
+            <template v-slot:action>
+              <q-btn flat label="Dismiss" />
+            </template>
+          </q-banner>
+        </div>
 
       </template>
 
