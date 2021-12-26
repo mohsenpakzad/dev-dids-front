@@ -1,57 +1,32 @@
 <script>
-import { ref, onBeforeUnmount } from 'vue'
-
+import { ref, onBeforeUnmount, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
 const columns = [
   {
-    name: 'name',
+    name: 'subject',
     required: true,
-    label: 'Subject',
+    label: 'subject',
     align: 'left',
-    field: row => row.name,
+    field: row => row.subject,
     format: val => `${val}`,
     sortable: true
   },
-  { name: 'Issuer', align: 'center', label: 'Issuer', field: 'Issuer', sortable: true },
-  { name: 'Data', label: 'Data' , field:  'data', sortable: true },
+  { name: 'issuer', align: 'center', label: 'Issuer', field: 'issuer', sortable: true },
+  { name: 'data', label: 'Data' , field:  'data', sortable: true },
   { name: 'validFrom', label:'Issuance Date', field: 'validFrom' },
   { name: 'validTo', label: 'Expiration Date', field: 'validTo' }
  ]
 
-const rows = [
-  {
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },
-  {
-    name: 'Google',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: 24,
-    validFrom: 4.0,
-    validTo: 87,
-  },
-  {
-    name: 'Microsoft',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: 24,
-    validFrom: 4.0,
-    validTo: 87,
-  },
 
-
-]
 
 export default {
   setup () {
+    const store = useStore()
     const selected = ref([])
     const persistent = ref(false)
     const tab =  ref('Holder')
+    const rows = ref([])
     const progress = ref([
       { loading: false, percentage: 0 },
       { loading: false, percentage: 0 },
@@ -74,14 +49,32 @@ export default {
       }, 500)
 
     }
+    async function getUserVCs() {
+
+      const devDIDs = store.getters.devDIDs
+
+      const VCIds = await devDIDs.vcsOfHolder(store.getters.account)
+      for(let i=0; i<VCIds.length;i++){
+          const myVC = await devDIDs.getVc(VCIds[i])
+          rows.value.push({...myVC, id: VCIds[i]})
+
+      }
+
+
+    }
 
     onBeforeUnmount(() => {
       intervals.forEach(val => {
         clearInterval(val)
       })
     })
+    // onMounted(()=>{
+    //  getUserVCs()
+    // })
+
     return {
       progress,
+      getUserVCs,
       startComputing,
       filter: ref(''),
       persistent,
@@ -115,7 +108,7 @@ export default {
           align="justify"
           class="bg-grey-3"
       >
-        <q-tab class="text-accent" name="Holder" icon="account_circle" label="Holder"  />
+        <q-tab class="text-accent" name="Holder" icon="account_circle" label="Holder" @click="getUserVCs"  />
 
       </q-tabs>
       <q-card-section class="div_issuer_header">
@@ -149,7 +142,7 @@ export default {
         >
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
             <q-card-section>
-              <q-checkbox dense v-model="props.selected" :label="props.row.name" />
+              <q-checkbox dense v-model="props.selected" :label="props.row.subject" />
             </q-card-section>
             <q-separator />
             <q-list dense>
@@ -422,32 +415,4 @@ export default {
   max-width:600px !important;
 }
 
-
-.dialog_info_items4
-{
-  position:relative;
-  top:6px;
-  font-size:14px !important;
-  font-weight:500;
-  width:13% !important;
-  min-width:50px !important;
-}
-
-.dialog_info_items5
-{
-  position:relative;
-  top:6px;
-  font-size:14px !important;
-  font-weight:500;
-  width:3% !important;
-}
-
-.dialog_info_items6
-{
-  position:relative;
-  top:9px;
-  font-size:12px !important;
-  font-weight:400;
-  width:70% !important;
-}
 </style>
