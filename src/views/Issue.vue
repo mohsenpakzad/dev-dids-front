@@ -19,8 +19,8 @@ const columns = ref([
     label: 'Holder',
     align: 'center',
     headerStyle: 'font-size:17px',
-    field: row => row.name,
-    format: val => `${val}`
+    field: (row: { name: any }) => row.name,
+    format: (val: any) => `${val}`
   },
   { name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
   { name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
