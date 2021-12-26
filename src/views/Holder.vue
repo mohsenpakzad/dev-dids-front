@@ -36,6 +36,11 @@ export default {
     const intervals = [ null, null, null ]
 
     function startComputing (id) {
+      const devDIDs = store.getters.devDIDs
+      console.log(JSON.stringify(selected))
+      // const VP = await devDIDs.generateVp(selec)
+
+
       progress.value[ id ].loading = true
       progress.value[ id ].percentage = 0
 
@@ -125,7 +130,7 @@ export default {
     <q-table
         :rows="rows"
         :columns="columns"
-        row-key="name"
+        row-key="subject"
         selection="multiple"
         v-model:selected="selected"
         :filter="filter"
@@ -174,7 +179,7 @@ export default {
                   <q-item-label >
                     <q-icon rounded color="blue-grey-4"  size="25px" name="title" v-if="col.label=='Data'"/>
                     <q-icon rounded color="teal-5" size="25px" name="verified" v-else-if="col.label=='Issuer'"/>
-                    <q-icon rounded color="accent" size="25px" name="subject" v-else-if="col.label=='Subject'"/>
+                    <q-icon rounded color="accent" size="25px" name="subject" v-else-if="col.label=='subject'"/>
                     <q-icon rounded color="green-6" size="25px" name="today" v-else-if="col.label=='Issuance Date'"/>
                     <q-icon rounded style="color:#F31E48" size="25px" name="today" v-if="col.label=='Expiration Date'"/>
                     {{ col.label }}</q-item-label>
