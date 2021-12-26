@@ -175,7 +175,7 @@ export default {
 
       </q-tabs>
       <q-card-section class="div_issuer_header">
-        <q-icon name="branding_watermark" color="black"></q-icon>
+        <q-icon name="badge" color="accent"></q-icon>
         Your Verifiable Credentials
       </q-card-section>
     <div class="q-pa-md">
