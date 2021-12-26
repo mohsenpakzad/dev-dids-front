@@ -18,8 +18,8 @@ const columns = ref([
     required: true,
     label: 'Dessert (100g serving)',
     align: 'left',
-    field: row => row.name,
-    format: val => `${val}`,
+    field: (row: { name: any; }) => row.name,
+    format: (val: any) => `${val}`,
     sortable: true
   },
   { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
@@ -27,8 +27,8 @@ const columns = ref([
   { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
   { name: 'protein', label: 'Protein (g)', field: 'protein' },
   { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-  { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+  { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10) },
+  { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10) }
 ])
 
 const rows = ref([
@@ -166,8 +166,8 @@ const cancelEnabled =  ref(false)
         class="bg-grey-3"
       >
         <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue" style="padding:10px 0px 10px 0px !important;"/>
-        <q-tab class="text-red" name="Revokes" icon="delete_forever" label="Revoke" style="fpadding:10px 0px 10px 0px !important;"/>
-        <q-tab name="movies" icon="movie" label="Movies" style="padding:10px 0px 10px 0px !important;"/>
+        <q-tab class="text-red" name="Revokes" icon="delete_forever" label="Revoke" style="padding:10px 0px 10px 0px !important;"/>
+<!--        <q-tab name="movies" icon="movie" label="Movies" style="padding:10px 0px 10px 0px !important;"/>-->
       </q-tabs>
 
       <template v-if="tab==='Issues'">
