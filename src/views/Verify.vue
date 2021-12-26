@@ -16,16 +16,17 @@ const tab =  ref('verifies')
 <template>
 
   <q-page
-      class="row items-center justify-evenly"
+      class="items-center justify-evenly"
       style="min-height: 700px"
   >
 
     <q-card
         class="q-px-lg q-pb-lg"
-        style="min-width: 50em;
-        margin:20px;
-          border-radius: 5px;
-          padding:0px !important;"
+        style="width:95%;
+        max-width: 1000px;
+        border-radius: 5px;
+        padding:0px 0px 20px 0px !important;
+        margin:20px auto 20px !important;"
         flat
         bordered
     >

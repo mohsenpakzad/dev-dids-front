@@ -20,13 +20,11 @@ const tab = ref('Issues')
 
 const columns = ref([
   {
-    name: 'address',
+    name: 'holder',
     required: true,
-    label: 'Holder',
+    label: 'Address',
     align: 'center',
     headerStyle: 'font-size:17px',
-    field: (row: { name: any }) => row.name,
-    format: (val: any) => `${val}`
   },
   {name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
   {name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
@@ -92,6 +90,20 @@ async function issue() {
   console.log(recipient)
 }
 
+async function getIssuerVcs(){
+  const devDIDs = store.getters.devDIDs as DevDIDs
+
+  const issuerVcIds = await devDIDs.vcsOfIssuer(store.getters.account)
+  rows.value = []
+
+  for (let i = 0; i < issuerVcIds.length; i++) {
+    const vc = await devDIDs.getVc(issuerVcIds[i])
+    console.log(vc)
+    rows.value.push(vc)
+  }
+
+}
+
 
 </script>
 
@@ -106,7 +118,7 @@ async function issue() {
     <q-card
         class="q-px-lg q-pb-lg"
         style="width:95%;
-        max-width: 750px;
+        max-width: 1000px;
         border-radius: 5px;
         padding:0px 0px 20px 0px !important;
         margin:20px auto 20px !important;"
@@ -121,7 +133,14 @@ async function issue() {
       >
         <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue"
                style="padding:10px 0px 10px 0px !important;"/>
-        <q-tab class="text-teal" name="VCs" icon="badge" label="VCs" style="padding:10px 0px 10px 0px !important;"/>
+        <q-tab
+            @click="getIssuerVcs"
+            class="text-teal"
+            name="VCs"
+            icon="badge"
+            label="VCs"
+            style="padding:10px 0px 10px 0px !important;"
+        />
       </q-tabs>
 
       <template v-if="tab==='Issues'">
@@ -228,8 +247,8 @@ async function issue() {
             >
               <template v-slot:body="props">
                 <q-tr :props="props" class="revoked1">
-                  <q-td key="address" :props="props" class="table_data" @click="dialog = true">
-                    {{ props.row.address }}
+                  <q-td key="holder" :props="props" class="table_data" @click="dialog = true">
+                    {{ props.row.holder }}
                   </q-td>
                   <q-td key="subject" :props="props" class="table_data" @click="dialog = true">
                     <q-badge color="green" class="table_badge">

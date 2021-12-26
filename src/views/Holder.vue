@@ -116,11 +116,17 @@ export default {
 
 <template>
   <q-page
-      class="row items-center justify-evenly"
+      class="items-center justify-evenly"
+      style="min-height: 700px"
   >
+
     <q-card
-        class=" q-pb-lg"
-        style="min-width: 50em; border-radius: 30px; max-width: 80%; margin-top: 20px"
+        class="q-px-lg q-pb-lg"
+        style="width:95%;
+        max-width: 1000px;
+        border-radius: 5px;
+        padding:0px 0px 20px 0px !important;
+        margin:20px auto 20px !important;"
         flat
         bordered
     >
@@ -181,7 +187,7 @@ export default {
                     {{ col.label }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label caption>{{ col.value }}</q-item-label>
+                  <q-item-label caption style="padding:10px !important;">{{ col.value }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
