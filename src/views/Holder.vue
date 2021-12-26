@@ -43,63 +43,7 @@ const rows = [
     validFrom: 4.0,
     validTo: 87,
   },
-  {
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },{
-    name: 'Railway Project',
-    Issuer: "0x00Cd65E9664D3cdd0855f80911a7A299cAEaC083",
-    subject: 6.0,
-    data: "Shima has Worked 3 month",
-    validFrom: 4.0,
-    validTo: 87,
-  },
+
 
 ]
 
@@ -162,7 +106,7 @@ export default {
   >
     <q-card
         class=" q-pb-lg"
-        style="min-width: 50em; border-radius: 30px; max-width: 75%; margin-top: 70px"
+        style="min-width: 50em; border-radius: 30px; max-width: 80%; margin-top: 20px"
         flat
         bordered
     >
@@ -210,8 +154,32 @@ export default {
             <q-separator />
             <q-list dense>
               <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name">
+<!--                <q-item-section avatar v-if="col.label=='Subject'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="verified"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Data'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+
+<!--                <q-item-section avatar v-if="col.label=='Issuer'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Issuance Date'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section avatar v-if="col.label=='Expiration Date'">-->
+<!--                  <q-icon rounded color="accent" size="15px" name="title"/>-->
+<!--                </q-item-section>-->
+
                 <q-item-section>
-                  <q-item-label>{{ col.label }}</q-item-label>
+
+                  <q-item-label >
+                    <q-icon rounded color="blue-grey-4"  size="25px" name="title" v-if="col.label=='Data'"/>
+                    <q-icon rounded color="teal-5" size="25px" name="verified" v-else-if="col.label=='Issuer'"/>
+                    <q-icon rounded color="accent" size="25px" name="subject" v-else-if="col.label=='Subject'"/>
+                    <q-icon rounded color="green-6" size="25px" name="today" v-else-if="col.label=='Issuance Date'"/>
+                    <q-icon rounded style="color:#F31E48" size="25px" name="today" v-if="col.label=='Expiration Date'"/>
+                    {{ col.label }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-item-label caption>{{ col.value }}</q-item-label>
@@ -219,6 +187,58 @@ export default {
               </q-item>
             </q-list>
 
+<!--            <q-list class="shadow-2 rounded-borders" style="margin:0 auto 0;width:100%;">-->
+<!--              &lt;!&ndash; Issuer Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="teal-5" size="34px" name="verified"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Issuer</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Issuer Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Subject Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="blue-grey-4" size="34px" name="title"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Subject</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">Employment</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Subject Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Data Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded color="green-6" size="34px" name="edit_note"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Data</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">0xF28122CA</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Data Ends &ndash;&gt;-->
+
+<!--              <q-separator inset/>-->
+
+<!--              &lt;!&ndash; Date Begins &ndash;&gt;-->
+<!--              <q-item>-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>-->
+<!--                </q-item-section>-->
+<!--                <div class="dialog_info_items4">Validity</div>-->
+<!--                <div class="dialog_info_items5">:</div>-->
+<!--                <div class="dialog_info_items6">From 26/12/2021 To 26/12/2022</div>-->
+<!--              </q-item>-->
+<!--              &lt;!&ndash; Date Ends &ndash;&gt;-->
+
+<!--            </q-list>-->
           </q-card>
         </div>
 
@@ -402,4 +422,32 @@ export default {
   max-width:600px !important;
 }
 
+
+.dialog_info_items4
+{
+  position:relative;
+  top:6px;
+  font-size:14px !important;
+  font-weight:500;
+  width:13% !important;
+  min-width:50px !important;
+}
+
+.dialog_info_items5
+{
+  position:relative;
+  top:6px;
+  font-size:14px !important;
+  font-weight:500;
+  width:3% !important;
+}
+
+.dialog_info_items6
+{
+  position:relative;
+  top:9px;
+  font-size:12px !important;
+  font-weight:400;
+  width:70% !important;
+}
 </style>
