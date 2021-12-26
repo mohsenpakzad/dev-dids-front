@@ -1,7 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
+import { useStore } from 'vuex'
 
+const store = useStore()
 const tab = ref('verifying')
+
+
+const connectAddress = computed(() => {
+  return `Connected to ${store.getters.account}`
+})
+
+async function connectWallet() {
+  await store.dispatch('connectWallet')
+}
+
+onBeforeMount(async () => {
+  await store.dispatch('readOnlyConnect')
+})
+
 </script>
 
 <template>
@@ -42,14 +58,23 @@ const tab = ref('verifying')
       </q-toolbar-title>
 
       <q-btn
+          v-if="!store.getters.account"
           class="q-mr-md"
           rounded
           color="pink"
           outline
+          @click="connectWallet"
       >
         Connect Wallet
       </q-btn>
-
+      <q-btn
+          v-else
+          class="q-mr-md"
+          rounded
+          color="green"
+      >
+        {{ connectAddress }}
+      </q-btn>
 
       <q-btn
           style="background-color: white"
