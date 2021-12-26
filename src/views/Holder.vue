@@ -59,10 +59,15 @@ export default {
       const devDIDs = store.getters.devDIDs
 
       const VCIds = await devDIDs.vcsOfHolder(store.getters.account)
+      console.log(VCIds)
       for(let i=0; i<VCIds.length;i++){
+          try {
+
           const myVC = await devDIDs.getVc(VCIds[i])
           rows.value.push({...myVC, id: VCIds[i]})
-
+          } catch (err){
+            console.log(err)
+          }
       }
 
 
