@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const tab = ref('verifying')
 </script>
 
 <template>
@@ -10,19 +11,34 @@ import { ref } from 'vue'
 
       <div>DevDIDs</div>
 
-      <q-toolbar-title >
-                <q-tabs
+      <q-toolbar-title>
+        <q-tabs
+            v-model="tab"
+            class="bg-white text-black"
+            style="max-width: fit-content; text-align: center; margin: 10px auto 0 45%; border-radius: 20px"
+        >
+          <q-route-tab
+              class="drawer_tab"
+              name="holding"
+              label="Holding"
+              to="/holder"
+          />
 
-                    v-model="tab"
+          <q-route-tab
+              class="drawer_tab"
+              name="verifying"
+              label="Verifying"
+              to="/verify"
+          />
 
-                    class="bg-white text-black"
-                    style="max-width: fit-content; text-align: center; margin: 10px auto 0 45%; border-radius: 20px"
-                >
-                  <q-tab name="Verify"  label="Verify" class="drawer_tab"/>
-                  <q-tab name="Issue"  label="Issue" class="drawer_tab"/>
-                  <q-tab name="Create Vp"  label="Create Vp" class="drawer_tab"/>
-                </q-tabs>
+          <q-route-tab
+              class="drawer_tab"
+              name="issuing"
+              label="Issuing"
+              to="/issue"
+          />
 
+        </q-tabs>
       </q-toolbar-title>
 
       <q-btn
@@ -82,13 +98,13 @@ import { ref } from 'vue'
   </q-layout>
 </template>
 
-<style >
+<style>
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /*text-align: center;*/
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
 }
+
 .drawer_tab {
   margin: 4px;
   border-radius: 20px;
