@@ -14,128 +14,60 @@ const tab =  ref('Issues')
 
 const columns = ref([
   {
-    name: 'name',
+    name: 'address',
     required: true,
-    label: 'Dessert (100g serving)',
-    align: 'left',
-    field: (row: { name: any; }) => row.name,
-    format: (val: any) => `${val}`,
-    sortable: true
+    label: 'Holder',
+    align: 'center',
+    headerStyle: 'font-size:17px',
+    field: row => row.name,
+    format: val => `${val}`
   },
-  { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-  { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-  { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-  { name: 'protein', label: 'Protein (g)', field: 'protein' },
-  { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-  { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10) }
+  { name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
+  { name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
+  { name: 'more', align: 'center', label: 'Extend, Revoke', field: 'more', headerStyle: 'font-size:17px'},
 ])
 
 const rows = ref([
   {
-    name: 'Frozen Yogurt',
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    sodium: 87,
-    calcium: '14%',
-    iron: '1%'
+    address: '0x70372...D96',
+    subject: 'Employment',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Ice cream sandwich',
-    calories: 237,
-    fat: 9.0,
-    carbs: 37,
-    protein: 4.3,
-    sodium: 129,
-    calcium: '8%',
-    iron: '1%'
+    address: '0x70372...D96',
+    subject: 'University Student',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Eclair',
-    calories: 262,
-    fat: 16.0,
-    carbs: 23,
-    protein: 6.0,
-    sodium: 337,
-    calcium: '6%',
-    iron: '7%'
+    address: '0x70372...D96',
+    subject: 'Employment',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Cupcake',
-    calories: 305,
-    fat: 3.7,
-    carbs: 67,
-    protein: 4.3,
-    sodium: 413,
-    calcium: '3%',
-    iron: '8%'
+    address: '0x70372...D96',
+    subject: 'License',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Gingerbread',
-    calories: 356,
-    fat: 16.0,
-    carbs: 49,
-    protein: 3.9,
-    sodium: 327,
-    calcium: '7%',
-    iron: '16%'
+    address: '0x70372...D96',
+    subject: 'Employment',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Jelly bean',
-    calories: 375,
-    fat: 0.0,
-    carbs: 94,
-    protein: 0.0,
-    sodium: 50,
-    calcium: '0%',
-    iron: '0%'
+    address: '0x70372...D96',
+    subject: 'Employment',
+    data: '0xF2812...2CA'
   },
   {
-    name: 'Lollipop',
-    calories: 392,
-    fat: 0.2,
-    carbs: 98,
-    protein: 0,
-    sodium: 38,
-    calcium: '0%',
-    iron: '2%'
-  },
-  {
-    name: 'Honeycomb',
-    calories: 408,
-    fat: 3.2,
-    carbs: 87,
-    protein: 6.5,
-    sodium: 562,
-    calcium: '0%',
-    iron: '45%'
-  },
-  {
-    name: 'Donut',
-    calories: 452,
-    fat: 25.0,
-    carbs: 51,
-    protein: 4.9,
-    sodium: 326,
-    calcium: '2%',
-    iron: '22%'
-  },
-  {
-    name: 'KitKat',
-    calories: 518,
-    fat: 26.0,
-    carbs: 65,
-    protein: 7,
-    sodium: 54,
-    calcium: '12%',
-    iron: '6%'
+    address: '0x70372...D96',
+    subject: 'Employment',
+    data: '0xF2812...2CA'
   }
 ])
 
 const dialog =  ref(false)
-const cancelEnabled =  ref(false)
+const confirm =  ref(false)
+const prompt =  ref(false)
 
 
 </script>
@@ -166,8 +98,7 @@ const cancelEnabled =  ref(false)
         class="bg-grey-3"
       >
         <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue" style="padding:10px 0px 10px 0px !important;"/>
-        <q-tab class="text-red" name="Revokes" icon="delete_forever" label="Revoke" style="padding:10px 0px 10px 0px !important;"/>
-<!--        <q-tab name="movies" icon="movie" label="Movies" style="padding:10px 0px 10px 0px !important;"/>-->
+        <q-tab class="text-teal" name="VCs" icon="badge" label="VCs" style="padding:10px 0px 10px 0px !important;"/>
       </q-tabs>
 
       <template v-if="tab==='Issues'">
@@ -258,46 +189,190 @@ const cancelEnabled =  ref(false)
       </template>
 
 
-      <template v-else-if="tab==='Revokes'">
+      <template v-else-if="tab==='VCs'">
         <q-card>
-          <q-card-section class="div_issuer_header">
-            <q-icon color="red" name="delete_forever"/>
-            Revoke
+          <q-card-section class="div_issuer_header2">
+            <q-icon color="teal" name="badge"/>
+            VCs
           </q-card-section>
 
           <div class="q-pa-md table_container">
             <q-table
-              class="my-sticky-header-column-table"
-              title="Treats"
-              style="width:1000px !important;
-                      margin:0 auto 0 !important;"
+              style="
+                    max-width:1000px !important;
+                    width:95% !important;
+                    margin:0 auto 0 !important;"
               flat
+              :table-header-style="{ fontSize: '30px !important' }"
               :rows="rows"
               :columns="columns"
               row-key="name"
-            />
+            >
+              <template v-slot:body="props">
+                <q-tr :props="props" class="revoked1">
+                  <q-td key="address" :props="props" class="table_data" @click="dialog = true">
+                    {{ props.row.address }}
+                  </q-td>
+                  <q-td key="subject" :props="props" class="table_data" @click="dialog = true">
+                    <q-badge color="green" class="table_badge">
+                      {{ props.row.subject }}
+                    </q-badge>
+                  </q-td>
+                  <q-td key="data" :props="props" class="table_data" @click="dialog = true">
+                    {{ props.row.data }}
+                  </q-td>
+                  <q-td key="more" :props="props" class="table_data">
+                    <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
+                    <q-icon color="teal" name="more_time" class="data_icon" @click="prompt = true"/>
+                    <q-icon color="red" name="delete_forever" class="data_icon" @click="confirm = true"/>
+                  </q-td>
+                </q-tr>
+              </template>
+            </q-table>
           </div>
+          <!-- Dialogs Begin -->
           <div class="q-pa-md">
-            <q-btn label="Open Dialog" color="primary" @click="dialog = true" />
-            <q-dialog v-model="dialog" persistent>
-              <q-card>
-                <q-card-section class="row items-center">
-                  <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
-                  <span class="q-ml-sm">You are currently not connected to any network.</span>
+            <!-- Dialog Information Begins -->
+            <q-dialog v-model="dialog">
+              <q-card class="dialog_info">
+                <q-card-section class="items-center dialog_header_info">
+                  <q-avatar size="50px" font-size="28px" color="warning" icon="info" text-color="white" class="avatar_info"/>
+                  <span class="q-ml-sm header_info">Information of the VC</span>
                 </q-card-section>
 
-                <q-card-section class="row items-center">
-                  <q-toggle v-model="cancelEnabled" label="Cancel button enabled" />
-                </q-card-section>
+                <q-list class="shadow-2 rounded-borders" style="margin:0 auto 0;width:95%;">
+                  <!-- Holder Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="teal" size="34px" name="manage_accounts"/>
+                    </q-item-section>
+
+                    <div class="dialog_info_items1">Holder</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>
+
+                    <!-- <q-item-section class="dialog_info_items1">Holder</q-item-section>
+                    <q-item-section class="dialog_info_items2">:</q-item-section>
+                    <q-item-section class="dialog_info_items3">0x703727c32AfE82CFf9fA58280159c10e0fF40D96</q-item-section> -->
+                  </q-item>
+                  <!-- Holder Ends -->
+
+                  <q-separator inset/>
+
+                  <!-- Subject Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="blue-grey-4" size="34px" name="title"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Subect</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">Employment</div>
+                  </q-item>
+                  <!-- Subject Ends -->
+
+                  <q-separator inset/>
+
+                  <!-- Data Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded color="green-6" size="34px" name="edit_note"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Data</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">0xF28122CA</div>
+                  </q-item>
+                  <!-- Data Ends -->
+
+                  <q-separator inset/>
+
+                  <!-- Date Begins -->
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Validity</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">From 26/12/2021 To 26/12/2022</div>
+                  </q-item>
+                  <!-- Date Ends -->
+
+                </q-list>
+
 
                 <!-- Notice v-close-popup -->
                 <q-card-actions align="right">
-                  <q-btn flat label="Cancel" color="primary" v-close-popup="cancelEnabled" :disable="!cancelEnabled" />
-                  <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
+                  <q-btn flat label="Close" color="primary" v-close-popup />
                 </q-card-actions>
               </q-card>
             </q-dialog>
+            <!-- Dialog Information Ends -->
+
+            <!-- Dialog Revoke Begins -->
+            <q-dialog v-model="confirm">
+              <q-card>
+                <q-card-section class="row items-center">
+                  <q-avatar font-size="40px" icon= "delete_forever"  text-color="red" />
+                  <span class="q-ml-xs">Are you sure You want to delete this VC?</span>
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn flat label="Cancel" color="primary" v-close-popup />
+                  <q-btn flat label="Delete" color="red" v-close-popup />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <!-- Dialog Revoke Ends -->
+
+            <!-- Dialog Extend Begins -->
+            <q-dialog v-model="prompt">
+              <q-card style="min-width: 350px">
+                <q-card-section>
+                  <q-item>
+                    <q-item-section avatar>
+                      <!-- <q-icon rounded size="34px" name="more_time" color="teal"/> -->
+                      <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>
+                    </q-item-section>
+                    <div class="dialog_info_items1">Validity</div>
+                    <div class="dialog_info_items2">:</div>
+                    <div class="dialog_info_items3">
+                      From
+                      <span style="color:green; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2021</span>
+                      To
+                      <span style="color:crimson; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2022</span>
+                    </div>
+                  </q-item>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  <q-input
+                    outlined
+                    v-model="newExp"
+                    label="New Expiration Date"
+                    mask="date"
+                    :rules="['date']"
+                  >
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="newExp">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat/>
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </q-card-section>
+
+                <q-card-actions align="right" class="text-primary">
+                  <q-btn flat label="Cancel" v-close-popup />
+                  <q-btn flat label="Extend" color="green-10" v-close-popup />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            <!-- Dialog Extend Ends -->
           </div>
+          <!-- Dialogs End -->
         </q-card>
       </template>
 
@@ -320,7 +395,8 @@ const cancelEnabled =  ref(false)
     box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
 }
 
-.div_issuer_header {
+.div_issuer_header, .div_issuer_header2
+{
     margin: 30px 0px 0px 0px !important;
     font-size: 1.71428571rem;
     line-height: 1.28571429em;
@@ -328,74 +404,115 @@ const cancelEnabled =  ref(false)
     padding: 0;
 }
 
+.revoked
+{
+  background-color:rgb(241, 241, 241) !important;
+}
+
+.revoked td:first-child
+{
+  background-color:rgb(241, 241, 241) !important;
+}
+
+tr:hover
+{
+  cursor:pointer;
+}
+
+.div_issuer_header2
+{
+  margin: 30px 0px 30px 0px !important;
+}
+
 .the_form
 {
   padding:30px !important;
 }
 
+.data_icon
+{
+  margin:0px 3px 0px 3px!important;
+  font-size:22px !important;
+}
+
+.table_badge
+{
+  padding:10px !important;
+  color:white;
+  font-weight:700;
+  background-color:#1CD26B !important;
+  font-size:13px;
+}
+
 .table_container
 {
   width:100% !important;
-  background-color:red !important;
+  // background-color:red !important;
   padding:0px !important;
 }
 
-
-
-.my-sticky-header-column-table
+.table_data
 {
-  /* height or max-height is important */
-  height: 310px;
-  /* specifying max-width so the example can
-    highlight the sticky column on any browser window */
-  max-width: 600px;
+  min-width:160px !important;
+  width:25% !important;
+  text-align:center !important;
+  font-size:15px;
 }
 
 td:first-child
 {
-    /* bg color is important for td; just specify one */
-    background-color: #c1f4cd !important;
+  background-color: #f5f5dc;
+  background-color: white;
 }
 
-tr th
+.dialog_info_items1, .dialog_info_items2,
+.dialog_info_items3
 {
-    position: sticky;
-    /* higher than z-index for td below */
-    z-index: 2;
-    /* bg color is important; just specify one */
-    background: #fff;
+  min-width:40px;
+  text-align:left !important;
+  font-size:15px;
+  display:table-cell !important;
+  padding-top:10px;
 }
 
-  /* this will be the loading indicator */
-  thead tr:last-child th
+.dialog_info_items1
 {
-    /* height of all previous header rows */
-    top: 48px;
-    /* highest z-index */
-    z-index: 3;
+  width:13% !important;
+  min-width:50px !important;
 }
 
-  thead tr:first-child th
+.dialog_info_items2
 {
-    top: 0;
-    z-index: 1;
+  width:1% !important;
 }
 
-  tr:first-child th:first-child
+.dialog_info_items3
 {
-    /* highest z-index */
-    z-index: 3;
+  width:70% !important;
 }
 
-  td:first-child
+.dialog_header_info
 {
-    z-index: 1;
+  background-color:#F0E68E !important;
+  margin-bottom:5px;
 }
 
-  td:first-child, th:first-child
+.avatar_info
 {
-    position: sticky;
-    left: 0;
+  display:block !important;
+  margin:0 auto 10px !important;
+}
+
+.header_info
+{
+  display:block !important;
+  font-size:18px !important;
+}
+
+.dialog_info
+{
+  width:95% !important;
+  max-width:600px !important;
 }
 
 </style>
