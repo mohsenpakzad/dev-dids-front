@@ -7,6 +7,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@metamask/providers": "^8.1.1",
     "@quasar/extras": "^1.12.2",
     "ethers": "^5.5.2",
     "quasar": "^2.4.0",
