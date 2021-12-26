@@ -62,7 +62,17 @@ export default {
       }, 500)
 
     }
-
+    async function deleteVCs(){
+      const td = await g()
+      console.log(td)
+      for(let i = 0 ; i<td.length; i++) {
+        const devDIDs = store.getters.devDIDs
+        const deleteTxn = await devDIDs.delete_(td[i])
+        const recipient = await deleteTxn.wait()
+        console.log(recipient)
+      }
+      await getUserVCs()
+    }
     async function getUserVCs() {
 
       const devDIDs = store.getters.devDIDs
@@ -104,6 +114,7 @@ export default {
       rows,
       VP,
       store,
+      deleteVCs,
       getSelectedString () {
         return selected.value.length === 0 ? '' : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rows.length}`
       }
@@ -287,7 +298,7 @@ export default {
             </q-card-section>
             <q-card-actions align="center">
               <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn flat label="Delete" color="red" v-close-popup />
+              <q-btn flat label="Delete" @click="deleteVCs" color="red" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
