@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
+import { useStore } from 'vuex'
 
-const issue = reactive({
+import { DevDIDs } from "../contractData/types"
+
+
+const store = useStore()
+
+const issueForm = reactive({
   to: '',
   subject: '',
   data: '',
@@ -9,7 +15,7 @@ const issue = reactive({
   validTo: ''
 })
 
-const tab =  ref('Issues')
+const tab = ref('Issues')
 
 
 const columns = ref([
@@ -22,9 +28,9 @@ const columns = ref([
     field: row => row.name,
     format: val => `${val}`
   },
-  { name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
-  { name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
-  { name: 'more', align: 'center', label: 'Extend, Revoke', field: 'more', headerStyle: 'font-size:17px'},
+  {name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
+  {name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
+  {name: 'more', align: 'center', label: 'Extend, Revoke', field: 'more', headerStyle: 'font-size:17px'},
 ])
 
 const rows = ref([
@@ -65,37 +71,51 @@ const rows = ref([
   }
 ])
 
-const dialog =  ref(false)
+const dialog = ref(false)
 
+async function issue() {
+
+  const devDIDs = store.getters.devDIDs as DevDIDs
+
+  const issueTxn = await devDIDs.issue(
+      issueForm.to,
+      issueForm.subject,
+      issueForm.data,
+      0, // TODO: fix these later
+      100000,
+  )
+
+  const recipient = await issueTxn.wait()
+  console.log(recipient)
+}
 
 </script>
-
-
 
 <template>
 
   <q-page
-    class="items-center justify-evenly"
-    style="min-height: 700px"
+      class="items-center justify-evenly"
+      style="min-height: 700px"
   >
 
     <q-card
-      class="q-px-lg q-pb-lg"
-      style="width:95%;
+        class="q-px-lg q-pb-lg"
+        style="width:95%;
         max-width: 750px;
         border-radius: 5px;
         padding:0px 0px 20px 0px !important;
         margin:20px auto 20px !important;"
-      flat
-      bordered
+        flat
+        bordered
     >
 
       <q-tabs
-        v-model="tab"
-        align="justify"
-        class="bg-grey-3"
+          v-model="tab"
+          align="justify"
+          class="bg-grey-3"
       >
-        <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue" style="padding:10px 0px 10px 0px !important;"/>
+        <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue"
+               style="padding:10px 0px 10px 0px !important;"/>
         <q-tab class="text-teal" name="VCs" icon="badge" label="VCs" style="padding:10px 0px 10px 0px !important;"/>
       </q-tabs>
 
@@ -106,40 +126,35 @@ const dialog =  ref(false)
         </q-card-section>
 
         <q-form
-          class="q-gutter-md the_form"
+            class="q-gutter-md the_form"
         >
           <q-input
-            outlined
-            v-model="issue.to"
-            label="To (Address)"
-            lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Please type something']"
+              outlined
+              v-model="issueForm.to"
+              label="To (Address)"
+              lazy-rules
+              :rules="[ val => val && val.length > 0 || 'Please type something']"
           />
 
           <q-input
               outlined
-              v-model="issue.subject"
+              v-model="issueForm.subject"
               label="Subject"
               lazy-rules
-              :rules="[
-            val => val !== null && val !== '' || 'Please type your age',
-            val => val > 0 && val < 100 || 'Please type a real age'
-          ]"
+              :rules="[ val => val && val.length > 0 || 'Please type something']"
           />
 
           <q-input
               outlined
-              v-model="issue.data"
+              v-model="issueForm.data"
               label="Data"
               lazy-rules
-              :rules="[
-            val => val !== null && val !== '' || 'Please type your data',
-          ]"
+              :rules="[ val => val && val.length > 0 || 'Please type something']"
           />
 
           <q-input
               outlined
-              v-model="issue.validFrom"
+              v-model="issueForm.validFrom"
               label="Valid From"
               mask="date"
               :rules="['date']"
@@ -147,7 +162,7 @@ const dialog =  ref(false)
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="issue.validFrom">
+                  <q-date v-model="issueForm.validFrom">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat/>
                     </div>
@@ -160,7 +175,7 @@ const dialog =  ref(false)
 
           <q-input
               outlined
-              v-model="issue.validTo"
+              v-model="issueForm.validTo"
               label="Valid To"
               mask="date"
               :rules="['date']"
@@ -168,7 +183,7 @@ const dialog =  ref(false)
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="issue.validTo">
+                  <q-date v-model="issueForm.validTo">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat/>
                     </div>
@@ -180,8 +195,8 @@ const dialog =  ref(false)
 
 
           <div>
-            <q-btn label="Submit" type="submit" icon="send" color="secondary"/>
-            <q-btn label="Reset" type="reset" icon-right="cancel" color="red" class="q-ml-sm"/>
+            <q-btn label="Submit" icon="send" color="secondary" @click="issue"/>
+            <q-btn label="Reset" icon-right="cancel" color="red" class="q-ml-sm"/>
           </div>
         </q-form>
       </template>
@@ -196,15 +211,15 @@ const dialog =  ref(false)
 
           <div class="q-pa-md table_container">
             <q-table
-              style="
+                style="
                     max-width:1000px !important;
                     width:95% !important;
                     margin:0 auto 0 !important;"
-              flat
-              :table-header-style="{ fontSize: '30px !important' }"
-              :rows="rows"
-              :columns="columns"
-              row-key="name"
+                flat
+                :table-header-style="{ fontSize: '30px !important' }"
+                :rows="rows"
+                :columns="columns"
+                row-key="name"
             >
               <template v-slot:body="props">
                 <q-tr :props="props" class="revoked1" @click="dialog = true">
@@ -233,7 +248,8 @@ const dialog =  ref(false)
             <q-dialog v-model="dialog">
               <q-card class="dialog_info">
                 <q-card-section class="items-center dialog_header_info">
-                  <q-avatar size="50px" font-size="28px" color="warning" icon="info" text-color="white" class="avatar_info"/>
+                  <q-avatar size="50px" font-size="28px" color="warning" icon="info" text-color="white"
+                            class="avatar_info"/>
                   <span class="q-ml-sm header_info">Information of the VC</span>
                 </q-card-section>
 
@@ -298,7 +314,7 @@ const dialog =  ref(false)
 
                 <!-- Notice v-close-popup -->
                 <q-card-actions align="right">
-                  <q-btn flat label="Close" color="primary" v-close-popup />
+                  <q-btn flat label="Close" color="primary" v-close-popup/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -322,128 +338,109 @@ const dialog =  ref(false)
 }
 
 .ui.raised.segment {
-    -webkit-box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
-    box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
+  -webkit-box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
+  box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
 }
 
-.div_issuer_header, .div_issuer_header2
-{
-    margin: 30px 0px 0px 0px !important;
-    font-size: 1.71428571rem;
-    line-height: 1.28571429em;
-    font-weight: 500;
-    padding: 0;
+.div_issuer_header, .div_issuer_header2 {
+  margin: 30px 0px 0px 0px !important;
+  font-size: 1.71428571rem;
+  line-height: 1.28571429em;
+  font-weight: 500;
+  padding: 0;
 }
 
-.revoked
-{
-  background-color:rgb(241, 241, 241) !important;
+.revoked {
+  background-color: rgb(241, 241, 241) !important;
 }
 
-.revoked td:first-child
-{
-  background-color:rgb(241, 241, 241) !important;
+.revoked td:first-child {
+  background-color: rgb(241, 241, 241) !important;
 }
 
-tr:hover
-{
-  cursor:pointer;
+tr:hover {
+  cursor: pointer;
 }
 
-.div_issuer_header2
-{
+.div_issuer_header2 {
   margin: 30px 0px 30px 0px !important;
 }
 
-.the_form
-{
-  padding:30px !important;
+.the_form {
+  padding: 30px !important;
 }
 
-.data_icon
-{
-  margin:0px 3px 0px 3px!important;
-  font-size:22px !important;
+.data_icon {
+  margin: 0px 3px 0px 3px !important;
+  font-size: 22px !important;
 }
 
-.table_badge
-{
-  padding:10px !important;
-  color:white;
-  font-weight:700;
-  background-color:#1CD26B !important;
-  font-size:13px;
+.table_badge {
+  padding: 10px !important;
+  color: white;
+  font-weight: 700;
+  background-color: #1CD26B !important;
+  font-size: 13px;
 }
 
-.table_container
-{
-  width:100% !important;
+.table_container {
+  width: 100% !important;
   // background-color:red !important;
-  padding:0px !important;
+  padding: 0px !important;
 }
 
-.table_data
-{
-  min-width:160px !important;
-  width:25% !important;
-  text-align:center !important;
-  font-size:15px;
+.table_data {
+  min-width: 160px !important;
+  width: 25% !important;
+  text-align: center !important;
+  font-size: 15px;
 }
 
-td:first-child
-{
+td:first-child {
   background-color: #f5f5dc;
   background-color: white;
 }
 
 .dialog_info_items1, .dialog_info_items2,
-.dialog_info_items3
-{
-  min-width:40px;
-  text-align:left !important;
-  font-size:15px;
-  display:table-cell !important;
-  padding-top:10px;
+.dialog_info_items3 {
+  min-width: 40px;
+  text-align: left !important;
+  font-size: 15px;
+  display: table-cell !important;
+  padding-top: 10px;
 }
 
-.dialog_info_items1
-{
-  width:13% !important;
-  min-width:50px !important;
+.dialog_info_items1 {
+  width: 13% !important;
+  min-width: 50px !important;
 }
 
-.dialog_info_items2
-{
-  width:1% !important;
+.dialog_info_items2 {
+  width: 1% !important;
 }
 
-.dialog_info_items3
-{
-  width:70% !important;
+.dialog_info_items3 {
+  width: 70% !important;
 }
 
-.dialog_header_info
-{
-  background-color:#F0E68E !important;
-  margin-bottom:5px;
+.dialog_header_info {
+  background-color: #F0E68E !important;
+  margin-bottom: 5px;
 }
 
-.avatar_info
-{
-  display:block !important;
-  margin:0 auto 10px !important;
+.avatar_info {
+  display: block !important;
+  margin: 0 auto 10px !important;
 }
 
-.header_info
-{
-  display:block !important;
-  font-size:18px !important;
+.header_info {
+  display: block !important;
+  font-size: 18px !important;
 }
 
-.dialog_info
-{
-  width:95% !important;
-  max-width:600px !important;
+.dialog_info {
+  width: 95% !important;
+  max-width: 600px !important;
 }
 
 </style>
