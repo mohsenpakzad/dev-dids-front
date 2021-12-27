@@ -10,6 +10,19 @@ const verify = reactive({
 })
 
 const tab = ref('verifies')
+const verifyResult = ref([]) 
+
+async function getVerifyResult(){
+
+  // @ts-ignore
+  verifyResult.value = await repository.verify(verify.base64Vp, verify.holderAddress, 20)
+  console.log(verifyResult)
+
+}
+
+
+
+
 
 </script>
 
@@ -53,6 +66,9 @@ const tab = ref('verifies')
           <q-input
               outlined
               v-model="verify.base64Vp"
+              type="textarea"
+              autogrow
+              minlength = 1000
               label="Verifiable Presentation"
           />
 
@@ -63,30 +79,26 @@ const tab = ref('verifies')
           />
 
           <div>
-            <q-btn label="Verify" type="submit" icon="done_all" color="secondary"/>
+            <q-btn label="Verify" type="submit" icon="done_all" color="secondary" @click.prevent="getVerifyResult"/>
           </div>
         </q-form>
-        <!--
-                <div class="q-pa-md q-gutter-sm">
-                  <q-banner class="bg-grey-3">
-                    <template v-slot:avatar>
-                      <q-icon name="verified" color="primary" />
-                    </template>
-                      This Verifiable Presentation is valid
-
-                    <template v-slot:action>
-                      <q-btn flat label="Dismiss" />
-                    </template>
-                  </q-banner>
-                </div> -->
-
-        <div class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="text-white bg-red">
-            Unfortunately! This Verifiable Presentation is not Valid. Its date is expired.
-
+        
+        <div class="q-pa-md q-gutter-sm" v-if="verifyResult[0] == true ">
+          <q-banner class="bg-grey-3">
+            <template v-slot:avatar>
+              <q-icon name="verified" color="primary" />
+            </template>
+              This Verifiable Presentation is valid
+ 
             <!-- <template v-slot:action>
               <q-btn flat label="Dismiss" />
-            </template> -->
+            </template>  -->
+          </q-banner>
+        </div>
+
+        <div class="q-pa-md q-gutter-sm" v-if="verifyResult[0] == false ">
+          <q-banner inline-actions rounded class="text-white bg-red">
+            {{verifyResult[1]}}
           </q-banner>
         </div>
 
