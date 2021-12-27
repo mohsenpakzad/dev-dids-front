@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
+import { useRepository } from "../composables/useRepository";
+
+const repository = useRepository()
 
 const verify = reactive({
-  vpId: '',
-  holder: '',
-  date: '',
+  base64Vp: '',
+  holderAddress: '',
 })
 
-const tab =  ref('verifies')
+const tab = ref('verifies')
 
 </script>
-
-
 
 <template>
 
@@ -32,11 +32,12 @@ const tab =  ref('verifies')
     >
 
       <q-tabs
-        v-model="tab"
-        align="justify"
-        class="bg-grey-3"
+          v-model="tab"
+          align="justify"
+          class="bg-grey-3"
       >
-        <q-tab class="text-green" name="verifies" icon="verified" label="Verify" style="padding:10px 0px 10px 0px !important;"/>
+        <q-tab class="text-green" name="verifies" icon="verified" label="Verify"
+               style="padding:10px 0px 10px 0px !important;"/>
 
       </q-tabs>
 
@@ -51,61 +52,33 @@ const tab =  ref('verifies')
         >
           <q-input
               outlined
-              v-model="verify.vpId"
-              label="Verifiable Presentation Id"
-              lazy-rules
-              :rules="[ val !== null && val !== '' || 'Please type Id']"
+              v-model="verify.base64Vp"
+              label="Verifiable Presentation"
           />
 
           <q-input
               outlined
-              v-model="verify.holder"
+              v-model="verify.holderAddress"
               label="Address of Holder"
-              lazy-rules
-              :rules="[
-            val => val !== null && val !== '' || 'Please type address of holder'
-          ]"
           />
-
-          <q-input
-              outlined
-              v-model="verify.date"
-              label="Date"
-              mask="date"
-              :rules="['date']"
-          >
-            <template v-slot:append>
-              <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="verify.date">
-                    <div class="row items-center justify-end">
-                      <q-btn v-close-popup label="Close" color="primary" flat/>
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
-
-
 
           <div>
             <q-btn label="Verify" type="submit" icon="done_all" color="secondary"/>
           </div>
         </q-form>
-<!-- 
-        <div class="q-pa-md q-gutter-sm">
-          <q-banner class="bg-grey-3">
-            <template v-slot:avatar>
-              <q-icon name="verified" color="primary" />
-            </template>
-              This Verifiable Presentation is valid
+        <!--
+                <div class="q-pa-md q-gutter-sm">
+                  <q-banner class="bg-grey-3">
+                    <template v-slot:avatar>
+                      <q-icon name="verified" color="primary" />
+                    </template>
+                      This Verifiable Presentation is valid
 
-            <template v-slot:action>  
-              <q-btn flat label="Dismiss" />
-            </template>
-          </q-banner>
-        </div> -->
+                    <template v-slot:action>
+                      <q-btn flat label="Dismiss" />
+                    </template>
+                  </q-banner>
+                </div> -->
 
         <div class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="text-white bg-red">
@@ -120,15 +93,11 @@ const tab =  ref('verifies')
       </template>
 
 
-
     </q-card>
 
 
   </q-page>
 </template>
-<!-- font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif !important;
-
-  font-family: "Samim", Avenir, Helvetica, Arial, sans-serif; -->
 
 <style scoped>
 * {
@@ -136,21 +105,20 @@ const tab =  ref('verifies')
 }
 
 .ui.raised.segment {
-    -webkit-box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
-    box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
+  -webkit-box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
+  box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
 }
 
 .div_issuer_header {
-    margin: 30px 0px 0px 0px !important;
-    font-size: 1.71428571rem;
-    line-height: 1.28571429em;
-    font-weight: 500;
-    padding: 0;
+  margin: 30px 0px 0px 0px !important;
+  font-size: 1.71428571rem;
+  line-height: 1.28571429em;
+  font-weight: 500;
+  padding: 0;
 }
 
-.the_form
-{
-  padding:30px !important;
+.the_form {
+  padding: 30px !important;
 }
 
 </style>
