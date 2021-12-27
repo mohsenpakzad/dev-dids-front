@@ -175,7 +175,7 @@ export default {
 
       <template v-slot:item="props">
         <div
-            class="q-pa-lg grid-style-transition"
+            class="q-pa-lg grid-style-transition center_horizon"
             :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
@@ -198,7 +198,7 @@ export default {
                     {{ col.label }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-item-label caption style="padding:10px !important;">{{ col.value }}</q-item-label>
+                  <q-item-label caption style="padding:11px 0px 11px 0px !important;">{{ col.value }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -374,6 +374,11 @@ export default {
 {
   width:95% !important;
   max-width:600px !important;
+}
+
+.center_horizon
+{
+  margin:0 auto 0 !important;
 }
 
 </style>
