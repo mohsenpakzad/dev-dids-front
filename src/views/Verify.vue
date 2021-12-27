@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { useRepository } from "../composables/useRepository";
+import { useEthereum } from "../composables/useEthereum";
 
-const repository = useRepository()
+const ethereum = useEthereum()
 
 const verify = reactive({
   base64Vp: '',

@@ -2,7 +2,7 @@ import { useStore } from 'vuex'
 import { DevDIDs } from "../contractData/types";
 import { BigNumberish } from "ethers";
 
-export function useRepository() {
+export function useEthereum() {
 
     const store = useStore()
 

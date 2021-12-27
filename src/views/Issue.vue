@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { useRepository } from '../composables/useRepository'
+import { useEthereum } from '../composables/useEthereum'
 
-const repository = useRepository()
+const ethereum = useEthereum()
 
 const issueForm = reactive({
   holder: '',
@@ -74,7 +74,7 @@ const prompt = ref(false)
 
 async function issue() {
 
-  const issueTxn = await repository.devDIDs().issue(
+  const issueTxn = await ethereum.devDIDs().issue(
       issueForm.holder,
       issueForm.subject,
       issueForm.data,
@@ -88,9 +88,9 @@ async function issue() {
 
 async function getIssuerVcs(){
 
-  const devDIDs = repository.devDIDs()
+  const devDIDs = ethereum.devDIDs()
 
-  const issuerVcIds = await devDIDs.vcsOfIssuer(repository.account())
+  const issuerVcIds = await devDIDs.vcsOfIssuer(ethereum.account())
   rows.value = []
 
   for (let i = 0; i < issuerVcIds.length; i++) {
