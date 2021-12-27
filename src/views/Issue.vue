@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { useStore } from 'vuex'
+import { useRepository } from '../composables/useRepository'
 
-import { DevDIDs } from "../contractData/types"
-
-
-const store = useStore()
+const repository = useRepository()
 
 const issueForm = reactive({
   holder: '',
@@ -77,9 +74,7 @@ const prompt = ref(false)
 
 async function issue() {
 
-  const devDIDs = store.getters.devDIDs as DevDIDs
-
-  const issueTxn = await devDIDs.issue(
+  const issueTxn = await repository.devDIDs().issue(
       issueForm.holder,
       issueForm.subject,
       issueForm.data,
@@ -92,9 +87,10 @@ async function issue() {
 }
 
 async function getIssuerVcs(){
-  const devDIDs = store.getters.devDIDs as DevDIDs
 
-  const issuerVcIds = await devDIDs.vcsOfIssuer(store.getters.account)
+  const devDIDs = repository.devDIDs()
+
+  const issuerVcIds = await devDIDs.vcsOfIssuer(repository.account())
   rows.value = []
 
   for (let i = 0; i < issuerVcIds.length; i++) {
@@ -104,10 +100,7 @@ async function getIssuerVcs(){
   }
 
 }
-
-
 </script>
-
 
 <template>
 
