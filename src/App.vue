@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useFormatting } from "./composables/useFormatting"
 
 const store = useStore()
+const formatting = useFormatting()
+
 const tab = ref('verifying')
 
-
 const connectAddress = computed(() => {
-  return `Connected to ${store.getters.account}`
+  return `Connected to ${formatting.simplifyAddress(store.getters.account)}`
 })
 
 async function connectWallet() {
