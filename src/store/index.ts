@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 import { ethers } from 'ethers'
-// @ts-ignore
 import detectEthereumProvider from '@metamask/detect-provider'
 
 import contractAddress from '../contractData/contract-address.json'
