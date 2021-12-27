@@ -1,113 +1,134 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import { useEthereum } from "../composables/useEthereum";
+import { ref, reactive } from 'vue'
+import { useEthereum } from '../composables/useEthereum'
 
 const ethereum = useEthereum()
 
-const verify = reactive({
+
+const verifyForm = reactive({
   base64Vp: '',
   holderAddress: '',
 })
 
-const tab = ref('verifies')
-const verifyResult = ref([]) 
+const loading = ref(false)
+const verifyResult = ref<Array<string | boolean>>([])
 
-async function getVerifyResult(){
+async function verify() {
+  loading.value = true
 
-  // @ts-ignore
-  verifyResult.value = await repository.verify(verify.base64Vp, verify.holderAddress, 20)
-  console.log(verifyResult)
+  verifyResult.value = await ethereum.verify(
+      verifyForm.base64Vp,
+      verifyForm.holderAddress,
+      20
+  )
 
+  loading.value = false
 }
 
-
-
-
-
+function reset() {
+  verifyForm.base64Vp = ''
+  verifyForm.holderAddress = ''
+  verifyResult.value = []
+}
 </script>
 
 <template>
-
   <q-page
       class="items-center justify-evenly"
       style="min-height: 700px"
   >
-
     <q-card
         class="q-px-lg q-pb-lg"
         style="width:95%;
         max-width: 1000px;
         border-radius: 5px;
-        padding:0px 0px 20px 0px !important;
+        padding:0 0 20px 0 !important;
         margin:20px auto 20px !important;"
         flat
         bordered
     >
 
       <q-tabs
-          v-model="tab"
           align="justify"
           class="bg-grey-3"
       >
-        <q-tab class="text-green" name="verifies" icon="verified" label="Verify"
-               style="padding:10px 0px 10px 0px !important;"/>
-
+        <q-tab
+            class="text-green"
+            icon="verified"
+            label="Verify"
+            style="padding:10px 0 10px 0 !important;"
+        />
       </q-tabs>
 
-      <template v-if="tab==='verifies'">
-        <q-card-section class="div_issuer_header">
-          <q-icon color="green" name="how_to_reg"/>
-          Verify
-        </q-card-section>
+      <q-card-section class="div_issuer_header">
+        <q-icon color="green" name="how_to_reg"/>
+        Verify
+      </q-card-section>
 
-        <q-form
-            class="q-gutter-md the_form"
-        >
-          <q-input
-              outlined
-              v-model="verify.base64Vp"
-              type="textarea"
-              autogrow
-              minlength = 1000
-              label="Verifiable Presentation"
-          />
+      <q-form
+          class="q-gutter-md the_form"
+      >
+        <q-input
+            outlined
+            v-model="verifyForm.base64Vp"
+            type="textarea"
+            autogrow
+            clearable
+            clear-icon="clear"
+            label="Verifiable Presentation"
+        />
 
-          <q-input
-              outlined
-              v-model="verify.holderAddress"
-              label="Address of Holder"
-          />
+        <q-input
+            outlined
+            v-model="verifyForm.holderAddress"
+            label="Address of Holder"
+            clearable
+            clear-icon="clear"
+        />
 
-          <div>
-            <q-btn label="Verify" type="submit" icon="done_all" color="secondary" @click.prevent="getVerifyResult"/>
-          </div>
-        </q-form>
-        
-        <div class="q-pa-md q-gutter-sm" v-if="verifyResult[0] == true ">
-          <q-banner class="bg-grey-3">
-            <template v-slot:avatar>
-              <q-icon name="verified" color="primary" />
-            </template>
-              This Verifiable Presentation is valid
- 
-            <!-- <template v-slot:action>
-              <q-btn flat label="Dismiss" />
-            </template>  -->
-          </q-banner>
-        </div>
+        <q-btn
+            label="Verify"
+            type="submit"
+            icon="done_all"
+            color="secondary"
+            :loading="loading"
+            @click.prevent="verify"
+        />
+      </q-form>
 
-        <div class="q-pa-md q-gutter-sm" v-if="verifyResult[0] == false ">
-          <q-banner inline-actions rounded class="text-white bg-red">
-            {{verifyResult[1]}}
-          </q-banner>
-        </div>
+      <template v-if="verifyResult[0] === true" class="q-pa-md q-gutter-sm">
+        <q-banner inline-actions class="bg-grey-3">
 
+          <template v-slot:avatar>
+            <q-icon name="verified" color="primary"/>
+          </template>
+
+          This Verifiable Presentation is valid
+
+          <template v-slot:action>
+            <q-btn flat label="Reset Form" @click="reset"/>
+          </template>
+
+        </q-banner>
       </template>
 
+      <template v-else-if="verifyResult[0] === false" class="q-pa-md q-gutter-sm">
+        <q-banner inline-actions rounded class="text-white bg-red">
+
+          <template v-slot:avatar>
+            <q-icon name="gpp_bad" color="white"/>
+          </template>
+
+          {{ verifyResult[1] }}
+
+          <template v-slot:action>
+            <q-btn flat label="Reset" @click="reset"/>
+          </template>
+
+        </q-banner>
+      </template>
 
     </q-card>
-
-
   </q-page>
 </template>
 
