@@ -8,7 +8,7 @@ import { DevDIDs } from "../contractData/types"
 const store = useStore()
 
 const issueForm = reactive({
-  to: '',
+  holder: '',
   subject: '',
   data: '',
   validFrom: '',
@@ -22,8 +22,9 @@ const columns = ref([
   {
     name: 'holder',
     required: true,
-    label: 'Address',
+    label: 'Holder',
     align: 'center',
+    field: 'holder',
     headerStyle: 'font-size:17px',
   },
   {name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
@@ -33,37 +34,37 @@ const columns = ref([
 
 const rows = ref([
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'Employment',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'University Student',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'Employment',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'License',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'Employment',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'Employment',
     data: '0xF2812...2CA'
   },
   {
-    address: '0x70372...D96',
+    holder: '0x70372...D96',
     subject: 'Employment',
     data: '0xF2812...2CA'
   }
@@ -79,7 +80,7 @@ async function issue() {
   const devDIDs = store.getters.devDIDs as DevDIDs
 
   const issueTxn = await devDIDs.issue(
-      issueForm.to,
+      issueForm.holder,
       issueForm.subject,
       issueForm.data,
       0, // TODO: fix these later
@@ -154,7 +155,7 @@ async function getIssuerVcs(){
         >
           <q-input
               outlined
-              v-model="issueForm.to"
+              v-model="issueForm.holder"
               label="To (Address)"
               lazy-rules
               :rules="[ val => val && val.length > 0 || 'Please type something']"
@@ -219,7 +220,7 @@ async function getIssuerVcs(){
 
 
           <div>
-            <q-btn label="Submit" icon="send" color="secondary" @click="issue"/>
+            <q-btn label="Submit" icon="send" color="secondary" @click.prevent="issue"/>
             <q-btn label="Reset" icon-right="cancel" color="red" class="q-ml-sm"/>
           </div>
         </q-form>
@@ -302,7 +303,7 @@ async function getIssuerVcs(){
                     <q-item-section avatar>
                       <q-icon rounded color="blue-grey-4" size="34px" name="title"/>
                     </q-item-section>
-                    <div class="dialog_info_items1">Subect</div>
+                    <div class="dialog_info_items1">Subject</div>
                     <div class="dialog_info_items2">:</div>
                     <div class="dialog_info_items3">Employment</div>
                   </q-item>
