@@ -22,7 +22,7 @@ export function useEthereum() {
         const stringVp = JSON.stringify(vp)
         const base64Vp = btoa(stringVp)
 
-        return [base64Vp, vp]
+        return [vp, base64Vp]
     }
 
     async function verify(base64Vp: string, holderAddress: string, currentDate: number) {
