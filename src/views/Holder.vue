@@ -23,14 +23,26 @@ const columns = [
 ]
 
 const loading = ref(false)
+const deleting = ref(false)
 const selectedVcs = ref<any[]>([])
 
 
 const confirmDeleteDialog = ref(false)
 const generatedVpDialog = ref(false)
+const copyVpDialog = ref(false)
 
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
+
+function copy(){
+
+  navigator.clipboard.writeText(generatedVp.value[1]);
+
+  /* Alert the copied text */
+  copyVpDialog.value = true
+
+}
+
 
 
 async function generateVp() {
@@ -56,15 +68,23 @@ async function generateVp() {
 
 
 async function deleteVcs() {
-  const devDIDs = ethereum.devDIDs()
-
-  const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
-  for (let i = 0; i < vcIds.length; i++) {
-    const deleteTxn = await devDIDs.delete_(vcIds[i])
-    const recipient = await deleteTxn.wait()
-    console.log(recipient)
+  deleting.value = true
+  try {
+    const devDIDs = ethereum.devDIDs()
+    const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
+    for (let i = 0; i < vcIds.length; i++) {
+      const deleteTxn = await devDIDs.delete_(vcIds[i])
+      const recipient = await deleteTxn.wait()
+      console.log(recipient)
+    }
+    await store.dispatch('fetchUserHeldVcs')
   }
-  await store.dispatch('fetchUserHeldVcs')
+  catch (err){
+    console.log(err)
+  }
+  finally {
+    deleting.value = false
+  }
 }
 </script>
 
@@ -308,12 +328,39 @@ async function deleteVcs() {
               <q-item>
                 <q-item-section avatar>
                   <q-icon rounded size="34px" name="code" style="color:#000000;"/>
+
                 </q-item-section>
                 <div class="dialog_info_items1">Verify Code</div>
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
                   {{ formatting.formatLongStrings(generatedVp[1]) }}
+                  <q-btn>
+                    <q-icon @click="copy"
+                            rounded
+                            name="content_copy"
+                            size="30px"
+                            style="color:#000000;"
+                    />
+
+                  </q-btn>
+
+                  <q-dialog v-model="copyVpDialog" position='right'>
+                    <q-card style="width: 350px">
+                      <q-linear-progress :value="1" color="green" />
+
+                      <q-card-section class="row items-center no-wrap">
+                        <div>
+                          <div class="text-weight-bold">Verify Code Copied Successfully</div>
+
+                        </div>
+
+                      </q-card-section>
+                    </q-card>
+                  </q-dialog>
+
+
                 </div>
+
               </q-item>
 
             </q-list>
@@ -332,9 +379,16 @@ async function deleteVcs() {
             label="Delete"
             type="Delete"
             color="red"
+            :loading="deleting"
             @click="confirmDeleteDialog = true"
-            style="margin-left: 5px"
-        />
+            style="margin-left: 5px; width: 130px;"
+        >
+        <template v-slot:loading>
+          <q-spinner class="on-left"/>
+          Deleting...
+        </template>
+        </q-btn>
+
         <q-dialog v-model="confirmDeleteDialog">
           <q-card>
 
@@ -346,7 +400,10 @@ async function deleteVcs() {
 
             <q-card-actions align="center">
               <q-btn flat label="Cancel" color="primary" v-close-popup/>
-              <q-btn flat label="Delete" @click="deleteVcs" color="red" v-close-popup/>
+              <q-btn flat label="Delete"
+                     @click="deleteVcs"
+                     color="red"
+                     v-close-popup/>
             </q-card-actions>
 
           </q-card>
