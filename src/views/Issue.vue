@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, reactive } from 'vue'
+import { useStore } from 'vuex'
 import { useEthereum } from '../composables/useEthereum'
+import { useFieldRules } from '../composables/useFieldRules'
+import { useFormatting } from '../composables/useFormatting'
 
+
+const store = useStore()
 const ethereum = useEthereum()
+const fieldRules = useFieldRules()
+const formatting = useFormatting()
+
 
 const issueForm = reactive({
   holder: '',
@@ -29,43 +37,6 @@ const columns = ref([
   {name: 'more', align: 'center', label: 'Extend, Revoke', field: 'more', headerStyle: 'font-size:17px'},
 ])
 
-const rows = ref([
-  {
-    holder: '0x70372...D96',
-    subject: 'Employment',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'University Student',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'Employment',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'License',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'Employment',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'Employment',
-    data: '0xF2812...2CA'
-  },
-  {
-    holder: '0x70372...D96',
-    subject: 'Employment',
-    data: '0xF2812...2CA'
-  }
-])
 
 const dialog = ref(false)
 const confirm = ref(false)
@@ -73,32 +44,23 @@ const prompt = ref(false)
 
 
 async function issue() {
-
   const issueTxn = await ethereum.devDIDs().issue(
       issueForm.holder,
       issueForm.subject,
       issueForm.data,
-      0, // TODO: fix these later
-      100000,
+      formatting.stringDateToTimestamp(issueForm.validFrom),
+      formatting.stringDateToTimestamp(issueForm.validTo),
   )
-
   const recipient = await issueTxn.wait()
   console.log(recipient)
 }
 
-async function getIssuerVcs(){
-
-  const devDIDs = ethereum.devDIDs()
-
-  const issuerVcIds = await devDIDs.vcsOfIssuer(ethereum.account())
-  rows.value = []
-
-  for (let i = 0; i < issuerVcIds.length; i++) {
-    const vc = await devDIDs.getVc(issuerVcIds[i])
-    console.log(vc)
-    rows.value.push(vc)
-  }
-
+function reset() {
+  issueForm.holder = ''
+  issueForm.subject = ''
+  issueForm.data = ''
+  issueForm.validFrom = ''
+  issueForm.validTo = ''
 }
 </script>
 
@@ -114,7 +76,7 @@ async function getIssuerVcs(){
         style="width:95%;
         max-width: 1000px;
         border-radius: 5px;
-        padding:0px 0px 20px 0px !important;
+        padding:0 0 20px 0 !important;
         margin:20px auto 20px !important;"
         flat
         bordered
@@ -125,19 +87,23 @@ async function getIssuerVcs(){
           align="justify"
           class="bg-grey-3"
       >
-        <q-tab class="text-green" name="Issues" icon="check_circle" label="Issue"
-               style="padding:10px 0px 10px 0px !important;"/>
         <q-tab
-            @click="getIssuerVcs"
+            class="text-green"
+            name="Issues"
+            icon="check_circle"
+            label="Issue"
+            style="padding:10px 0 10px 0 !important;"
+        />
+        <q-tab
             class="text-teal"
             name="VCs"
             icon="badge"
             label="VCs"
-            style="padding:10px 0px 10px 0px !important;"
+            style="padding:10px 0 10px 0 !important;"
         />
       </q-tabs>
 
-      <template v-if="tab==='Issues'">
+      <template v-if="tab === 'Issues'">
         <q-card-section class="div_issuer_header">
           <q-icon color="green" name="check_circle"/>
           Issue
@@ -151,7 +117,7 @@ async function getIssuerVcs(){
               v-model="issueForm.holder"
               label="To (Address)"
               lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
+              :rules="[fieldRules.required, fieldRules.ethereumAddress]"
           />
 
           <q-input
@@ -159,7 +125,7 @@ async function getIssuerVcs(){
               v-model="issueForm.subject"
               label="Subject"
               lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
+              :rules="[fieldRules.required]"
           />
 
           <q-input
@@ -167,7 +133,7 @@ async function getIssuerVcs(){
               v-model="issueForm.data"
               label="Data"
               lazy-rules
-              :rules="[ val => val && val.length > 0 || 'Please type something']"
+              :rules="[fieldRules.required]"
           />
 
           <q-input
@@ -213,8 +179,19 @@ async function getIssuerVcs(){
 
 
           <div>
-            <q-btn label="Submit" icon="send" color="secondary" @click.prevent="issue"/>
-            <q-btn label="Reset" icon-right="cancel" color="red" class="q-ml-sm"/>
+            <q-btn
+                label="Submit"
+                icon="send"
+                color="secondary"
+                @click.prevent="issue"
+            />
+            <q-btn
+                label="Reset"
+                icon-right="cancel"
+                color="red"
+                class="q-ml-sm"
+                @click.prevent="reset"
+            />
           </div>
         </q-form>
       </template>
@@ -235,7 +212,7 @@ async function getIssuerVcs(){
                     margin:0 auto 0 !important;"
                 flat
                 :table-header-style="{ fontSize: '30px !important' }"
-                :rows="rows"
+                :rows="store.getters.userIssuedVcs"
                 :columns="columns"
                 row-key="name"
             >
@@ -285,7 +262,9 @@ async function getIssuerVcs(){
 
                     <!-- <q-item-section class="dialog_info_items1">Holder</q-item-section>
                     <q-item-section class="dialog_info_items2">:</q-item-section>
-                    <q-item-section class="dialog_info_items3">0x703727c32AfE82CFf9fA58280159c10e0fF40D96</q-item-section> -->
+                    <q-item-section
+                    class="dialog_info_items3">
+                    0x703727c32AfE82CFf9fA58280159c10e0fF40D96</q-item-section> -->
                   </q-item>
                   <!-- Holder Ends -->
 
@@ -367,9 +346,14 @@ async function getIssuerVcs(){
                     <div class="dialog_info_items2">:</div>
                     <div class="dialog_info_items3">
                       From
-                      <span style="color:green; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2021</span>
+                      <span
+                          style="color:green; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
+                        26/12/2021
+                      </span>
                       To
-                      <span style="color:crimson; font-weight:700; display:inline-block; padding:0px 2px 0px 2px;">26/12/2022</span>
+                      <span style="color:crimson; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
+                        26/12/2022
+                      </span>
                     </div>
                   </q-item>
                 </q-card-section>
@@ -413,9 +397,6 @@ async function getIssuerVcs(){
 
   </q-page>
 </template>
-<!-- font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif !important;
-
-  font-family: "Samim", Avenir, Helvetica, Arial, sans-serif; -->
 
 <style scoped lang="scss">
 * {
@@ -428,7 +409,7 @@ async function getIssuerVcs(){
 }
 
 .div_issuer_header, .div_issuer_header2 {
-  margin: 30px 0px 0px 0px !important;
+  margin: 30px 0 0 0 !important;
   font-size: 1.71428571rem;
   line-height: 1.28571429em;
   font-weight: 500;
@@ -448,7 +429,7 @@ tr:hover {
 }
 
 .div_issuer_header2 {
-  margin: 30px 0px 30px 0px !important;
+  margin: 30px 0 30px 0 !important;
 }
 
 .the_form {
@@ -456,7 +437,7 @@ tr:hover {
 }
 
 .data_icon {
-  margin: 0px 3px 0px 3px !important;
+  margin: 0 3px 0 3px !important;
   font-size: 22px !important;
 }
 
