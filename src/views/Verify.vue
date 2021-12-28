@@ -16,13 +16,17 @@ const verifyResult = ref<Array<string | boolean>>([])
 async function verify() {
   loading.value = true
 
-  verifyResult.value = await ethereum.verify(
-      verifyForm.base64Vp,
-      verifyForm.holderAddress,
-      20
-  )
-
-  loading.value = false
+  try {
+    verifyResult.value = await ethereum.verify(
+        verifyForm.base64Vp,
+        verifyForm.holderAddress,
+        10 // TODO: bind this to current date timestamp
+    )
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
 }
 
 function reset() {
@@ -56,6 +60,7 @@ function reset() {
             class="text-green"
             icon="verified"
             label="Verify"
+            name="verify"
             style="padding:10px 0 10px 0 !important;"
         />
       </q-tabs>
