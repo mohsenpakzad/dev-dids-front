@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 import { ethers } from 'ethers'
-// @ts-ignore
 import detectEthereumProvider from '@metamask/detect-provider'
 
 import contractAddress from '../contractData/contract-address.json'
@@ -8,16 +7,22 @@ import DevDIDsArtifact from '../contractData/DevDIDs.json'
 import { DevDIDs } from "../contractData/types"
 
 
-const store = createStore({
+export type State = {
+    account: string | null,
+    error: string | null,
+    devDIDs: DevDIDs | null,
+}
+
+const store = createStore<State>({
     state: () => ({
         account: null,
         error: null,
         devDIDs: null,
     }),
     getters: {
-        account: (state) => state.account,
-        error: (state) => state.error,
-        devDIDs: (state) => state.devDIDs,
+        account: (state): string | null => state.account,
+        error: (state): string | null => state.error,
+        devDIDs: (state): DevDIDs | null => state.devDIDs,
     },
     mutations: {
         setAccount(state, account) {
@@ -31,7 +36,7 @@ const store = createStore({
         }
     },
     actions: {
-        async readOnlyConnect({commit}) {
+        async readOnlyConnect({commit}): Promise<void> {
             /********************************/
             /* Initiate ready-only contract */
             /********************************/
@@ -47,7 +52,7 @@ const store = createStore({
 
             commit('setDevDIDs', devDIDs)
         },
-        async readWriteConnect({commit}) {
+        async readWriteConnect({commit}): Promise<void> {
             /********************************/
             /* Initiate read-write contract */
             /********************************/
@@ -63,7 +68,7 @@ const store = createStore({
 
             commit('setDevDIDs', devDIDs)
         },
-        async connectWallet({commit, dispatch, getters}) {
+        async connectWallet({commit, dispatch, getters}): Promise<void> {
 
             /*****************************************/
             /* Detect the MetaMask Ethereum provider */
