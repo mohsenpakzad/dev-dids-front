@@ -11,6 +11,8 @@ export type State = {
     account: string | null,
     error: string | null,
     devDIDs: DevDIDs | null,
+    userHeldVcs: any[],
+    userIssuedVcs: any[],
 }
 
 const store = createStore<State>({
@@ -18,11 +20,15 @@ const store = createStore<State>({
         account: null,
         error: null,
         devDIDs: null,
+        userHeldVcs: [],
+        userIssuedVcs: [],
     }),
     getters: {
         account: (state): string | null => state.account,
         error: (state): string | null => state.error,
         devDIDs: (state): DevDIDs | null => state.devDIDs,
+        userHeldVcs: (state): any[] => state.userHeldVcs,
+        userIssuedVcs: (state): any[] => state.userIssuedVcs,
     },
     mutations: {
         setAccount(state, account) {
@@ -33,6 +39,12 @@ const store = createStore<State>({
         },
         setDevDIDs(state, devDIDs) {
             state.devDIDs = devDIDs
+        },
+        setUserHeldVcs(state, userHeldVcs) {
+            state.userHeldVcs = userHeldVcs
+        },
+        setUserIssuedVcs(state, userIssuedVcs) {
+            state.userIssuedVcs = userIssuedVcs
         }
     },
     actions: {
@@ -40,7 +52,6 @@ const store = createStore<State>({
             /********************************/
             /* Initiate ready-only contract */
             /********************************/
-
 
             // @ts-ignore
             const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -147,6 +158,12 @@ const store = createStore<State>({
                 } else if (accounts[0] !== getters.account) {
                     // @ts-ignore
                     commit('setAccount', accounts[0])
+
+                    /*************/
+                    /* Fetch vcs */
+                    /*************/
+                    dispatch('fetchUserHeldVcs')
+                    dispatch('fetchUserIssuedVcs')
                 }
             })
 
@@ -154,8 +171,47 @@ const store = createStore<State>({
             /***********************/
             /* Connect to contract */
             /***********************/
+
+
             dispatch('readWriteConnect')
+
+
+            /*************/
+            /* Fetch vcs */
+            /*************/
+            dispatch('fetchUserHeldVcs')
+            dispatch('fetchUserIssuedVcs')
         },
+        async fetchUserHeldVcs({getters, commit}) {
+            const devDIDs = getters.devDIDs as DevDIDs
+
+            const vcIds = await devDIDs.vcsOfHolder(getters.account)
+            commit('setUserHeldVcs', [])
+
+            let vcs = []
+            for (let i = 0; i < vcIds.length; i++) {
+                if (vcIds[i].isZero()) continue
+
+                const myVc = await devDIDs.getVc(vcIds[i])
+                vcs.push({...myVc, id: vcIds[i]})
+            }
+            commit('setUserHeldVcs', vcs)
+        },
+        async fetchUserIssuedVcs({getters, commit}) {
+            const devDIDs = getters.devDIDs as DevDIDs
+
+            const vcIds = await devDIDs.vcsOfIssuer(getters.account)
+            commit('setUserIssuedVcs', [])
+
+            let vcs = []
+            for (let i = 0; i < vcIds.length; i++) {
+                if (vcIds[i].isZero()) continue
+
+                const myVc = await devDIDs.getVc(vcIds[i])
+                vcs.push({...myVc, id: vcIds[i]})
+            }
+            commit('setUserIssuedVcs', vcs)
+        }
     }
 })
 
