@@ -355,7 +355,7 @@ async function getIssuerVcs(){
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Delete" color="red" v-close-popup/>
+                  <q-btn flat label="Revoke" color="red" v-close-popup/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
