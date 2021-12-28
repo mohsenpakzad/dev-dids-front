@@ -18,8 +18,16 @@ const columns = [
   },
   {name: 'issuer', align: 'center', label: 'Issuer', field: 'issuer', sortable: true},
   {name: 'data', label: 'Data', field: 'data', sortable: true},
-  {name: 'validFrom', label: 'Issuance Date', field: 'validFrom'},
-  {name: 'validTo', label: 'Expiration Date', field: 'validTo'}
+  {
+    name: 'validFrom',
+    label: 'Issuance Date',
+    field: (row: any) => formatting.timestampToStringDate(row.validFrom.toNumber())
+  },
+  {
+    name: 'validTo',
+    label: 'Expiration Date',
+    field: (row: any) => formatting.timestampToStringDate(row.validTo.toNumber())
+  }
 ]
 
 const loading = ref(false)
