@@ -19,7 +19,6 @@ async function connectWallet() {
 onBeforeMount(async () => {
   await store.dispatch('readOnlyConnect')
 })
-
 </script>
 
 <template>
@@ -27,13 +26,24 @@ onBeforeMount(async () => {
 
     <q-toolbar>
 
-      <div>DevDIDs</div>
+      <q-btn
+          flat
+          dense
+          label="DevDIDs"
+          icon="cast"
+          @click="$router.replace('/')"
+      />
 
       <q-toolbar-title>
         <q-tabs
             v-model="tab"
-            class="bg-white text-black"
-            style="max-width: fit-content; text-align: center; margin: 10px auto 0 45%; border-radius: 20px"
+            dense
+            class="bg-white text-black q-mt-sm"
+            style="max-width: fit-content;
+            text-align: center;
+            margin: 10px auto 0 45%;
+            border-radius: 20px;
+            position: center"
         >
           <q-route-tab
               class="drawer_tab"
