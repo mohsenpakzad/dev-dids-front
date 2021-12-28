@@ -7,7 +7,7 @@ import {useFormatting} from "../composables/useFormatting";
 
 const store = useStore()
 const ethereum = useEthereum()
-
+const formatting = useFormatting()
 
 const columns = [
   {
@@ -32,12 +32,7 @@ const generatedVpDialog = ref(false)
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
 
-function format(str: string){
-  if(str.length>15) {
-    return str.substring(0, 6) + '...' + str.substring(str.length - 6, str.length)
-  }
-  return str
-}
+
 async function generateVp() {
   loading.value = true
 
@@ -205,7 +200,7 @@ async function deleteVcs() {
                         style="padding:11px 0 11px 0 !important;"
                         v-if="col.label === 'Issuer'"
                     >
-                      {{ format(col.value) }}
+                      {{ formatting.formatLongStrings(col.value)}}
                     </q-item-label>
                     <q-item-label
                         caption
@@ -274,7 +269,7 @@ async function deleteVcs() {
 
                 <div class="dialog_info_items1">Holder</div>
                 <div class="dialog_info_items2">:</div>
-                <div class="dialog_info_items3">{{ format(store.getters.account) }}</div>
+                <div class="dialog_info_items3">{{ formatting.formatLongStrings(store.getters.account) }}</div>
               </q-item>
               <!-- Holder Ends -->
 
@@ -317,7 +312,7 @@ async function deleteVcs() {
                 <div class="dialog_info_items1">Verify Code</div>
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
-                  {{ format(generatedVp[1]) }}
+                  {{ formatting.formatLongStrings(generatedVp[1]) }}
                 </div>
               </q-item>
 
