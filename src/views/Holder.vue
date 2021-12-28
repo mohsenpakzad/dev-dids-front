@@ -3,6 +3,7 @@ import { ref, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useEthereum } from '../composables/useEthereum'
 import { BigNumber } from "ethers";
+import {useFormatting} from "../composables/useFormatting";
 
 const store = useStore()
 const ethereum = useEthereum()
@@ -23,7 +24,7 @@ const columns = [
 
 const loading = ref(false)
 const selectedVcs = ref<any[]>([])
-const rows = ref([])
+
 
 const confirmDeleteDialog = ref(false)
 const generatedVpDialog = ref(false)
@@ -31,7 +32,12 @@ const generatedVpDialog = ref(false)
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
 
-
+function format(str: string){
+  if(str.length>15) {
+    return str.substring(0, 6) + '...' + str.substring(str.length - 6, str.length)
+  }
+  return str
+}
 async function generateVp() {
   loading.value = true
 
@@ -42,6 +48,8 @@ async function generateVp() {
         1, // TODO
         12 // TODO
     )
+    // generatedVp[1] = hashFnv32a(generatedVp[1],"a","a")
+    console.log()
     generatedVpDialog.value = true
   } catch (err) {
     console.log(err)
@@ -49,6 +57,8 @@ async function generateVp() {
     loading.value = false
   }
 }
+
+
 
 async function deleteVcs() {
   const devDIDs = ethereum.devDIDs()
@@ -100,7 +110,7 @@ async function deleteVcs() {
           class="q-pa-md"
           :rows="store.getters.userHeldVcs"
           :columns="columns"
-          row-key="subject"
+          row-key="id"
           selection="multiple"
           v-model:selected="selectedVcs"
           grid
@@ -193,8 +203,16 @@ async function deleteVcs() {
                     <q-item-label
                         caption
                         style="padding:11px 0 11px 0 !important;"
+                        v-if="col.label === 'Issuer'"
                     >
-                      {{ col.value }}
+                      {{ format(col.value) }}
+                    </q-item-label>
+                    <q-item-label
+                        caption
+                        style="padding:11px 0 11px 0 !important;"
+                        v-else
+                    >
+                      {{ col.value}}
                     </q-item-label>
                   </q-item-section>
 
@@ -256,7 +274,7 @@ async function deleteVcs() {
 
                 <div class="dialog_info_items1">Holder</div>
                 <div class="dialog_info_items2">:</div>
-                <div class="dialog_info_items3">{{ store.getters.account }}</div>
+                <div class="dialog_info_items3">{{ format(store.getters.account) }}</div>
               </q-item>
               <!-- Holder Ends -->
 
@@ -299,7 +317,7 @@ async function deleteVcs() {
                 <div class="dialog_info_items1">Verify Code</div>
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
-                  {{ generatedVp[1] }}
+                  {{ format(generatedVp[1]) }}
                 </div>
               </q-item>
 
