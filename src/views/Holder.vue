@@ -334,12 +334,12 @@ async function deleteVcs() {
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
                   {{ formatting.formatLongStrings(generatedVp[1]) }}
-                  <q-btn>
+                  <q-btn flat dense>
                     <q-icon @click="copy"
                             rounded
                             name="content_copy"
-                            size="30px"
-                            style="color:#000000;"
+                            size="20px"
+                            style="color:gray;"
                     />
 
                   </q-btn>
@@ -350,7 +350,7 @@ async function deleteVcs() {
 
                       <q-card-section class="row items-center no-wrap">
                         <div>
-                          <div class="text-weight-bold">Verify Code Copied Successfully</div>
+                          <div class="text-weight-bold">Verify Code Copied Successfully!</div>
 
                         </div>
 
@@ -368,7 +368,7 @@ async function deleteVcs() {
 
             <!-- Notice v-close-popup -->
             <q-card-actions align="right">
-              <q-btn flat label="Close" color="primary" v-close-popup/>
+              <q-btn flat label="Close" color="red" v-close-popup/>
             </q-card-actions>
           </q-card>
 
