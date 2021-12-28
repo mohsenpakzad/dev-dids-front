@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useEthereum } from '../composables/useEthereum'
+import { useFieldRules } from '../composables/useFieldRules'
+import { useUtils } from '../composables/useUtils'
 
 const ethereum = useEthereum()
-
+const fieldRules = useFieldRules()
+const utils = useUtils()
 
 const verifyForm = reactive({
   base64Vp: '',
@@ -20,7 +23,7 @@ async function verify() {
     verifyResult.value = await ethereum.verify(
         verifyForm.base64Vp,
         verifyForm.holderAddress,
-        10 // TODO: bind this to current date timestamp
+        utils.getCurrentTimestamp()
     )
   } catch (err) {
     console.log(err)
@@ -81,6 +84,7 @@ function reset() {
             clearable
             clear-icon="clear"
             label="Verifiable Presentation"
+            :rules="[fieldRules.required, fieldRules.validVp]"
         />
 
         <q-input
@@ -89,6 +93,7 @@ function reset() {
             label="Address of Holder"
             clearable
             clear-icon="clear"
+            :rules="[fieldRules.required, fieldRules.ethereumAddress]"
         />
 
         <q-btn
@@ -148,7 +153,7 @@ function reset() {
 }
 
 .div_issuer_header {
-  margin: 30px 0px 0px 0px !important;
+  margin: 30px 0 0 0 !important;
   font-size: 1.71428571rem;
   line-height: 1.28571429em;
   font-weight: 500;
