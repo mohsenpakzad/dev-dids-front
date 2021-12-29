@@ -53,7 +53,7 @@ const confirmDeleteDialog = ref(false)
 const generatedVpDialog = ref(false)
 const copyVpDialog = ref(false)
 const setVpDateDialog = ref(false)
-
+const wrongDateRangeDialog = ref(false)
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
 
@@ -74,11 +74,12 @@ async function setDates(){
 
 }
 async function generateVp() {
-
+  console.log("sfjaofjaoigj")
   loading.value = true
   if(minDate.value>model.value.from  || model.value.from> maxDate.value){
     loading.value = false
-    alert('Your Validation dates must be between '+ minDate.value+' and '+ maxDate.value)
+    wrongDateRangeDialog.value = true
+    console.log("sfjaofjaoigj")
     return
   }
   try {
@@ -318,12 +319,17 @@ async function deleteVcs() {
 
                   <div class="q-pa-md">
                     <div class="q-pb-sm">
+                      Pick A Validity Range
                       Model: {{ model}}
+
                     </div>
 
                     <q-date v-model="model" range
 
                     />
+
+
+
                   </div>
 
 
@@ -336,6 +342,19 @@ async function deleteVcs() {
                      v-close-popup/>
             </q-card-actions>
 
+          </q-card>
+        </q-dialog>
+        <q-dialog v-model="wrongDateRangeDialog" position='top'>
+          <q-card style="width: 350px">
+            <q-linear-progress :value="1" color="red" />
+
+            <q-card-section class="row items-center no-wrap">
+              <div>
+                <div class="text-weight-bold">Your Validation dates must be between {{ minDate}} and {{maxDate}}</div>
+
+              </div>
+
+            </q-card-section>
           </q-card>
         </q-dialog>
         <q-dialog
@@ -437,6 +456,7 @@ async function deleteVcs() {
                       </q-card-section>
                     </q-card>
                   </q-dialog>
+
 
 
                 </div>
