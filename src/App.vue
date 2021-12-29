@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { ref, computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import { useFormatting } from "./composables/useFormatting"
 
 const store = useStore()
+const router = useRouter()
 const formatting = useFormatting()
 
 const tab = ref('verifying')
+
+const menuItems = ref([
+  {
+    name: 'About',
+    click: () => router.push('/about')
+  }
+])
 
 const connectAddress = computed(() => {
   return `Connected to ${formatting.simplifyAddress(store.getters.account)}`
@@ -97,30 +106,16 @@ onBeforeMount(async () => {
       >
         <q-menu auto-close>
           <q-list style="min-width: 100px">
-            <q-item clickable>
-              <q-item-section>New tab</q-item-section>
+
+            <q-item
+                v-for="(menuItem, i) in menuItems"
+                :key="i"
+                @click="menuItem.click"
+                clickable
+            >
+              <q-item-section>{{ menuItem.name }}</q-item-section>
             </q-item>
-            <q-item clickable>
-              <q-item-section>New incognito tab</q-item-section>
-            </q-item>
-            <q-separator/>
-            <q-item clickable>
-              <q-item-section>Recent tabs</q-item-section>
-            </q-item>
-            <q-item clickable>
-              <q-item-section>History</q-item-section>
-            </q-item>
-            <q-item clickable>
-              <q-item-section>Downloads</q-item-section>
-            </q-item>
-            <q-separator/>
-            <q-item clickable>
-              <q-item-section>Settings</q-item-section>
-            </q-item>
-            <q-separator/>
-            <q-item clickable>
-              <q-item-section>Help &amp; Feedback</q-item-section>
-            </q-item>
+
           </q-list>
         </q-menu>
       </q-btn>
