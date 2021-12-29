@@ -74,12 +74,13 @@ async function setDates(){
 
 }
 async function generateVp() {
-  console.log("sfjaofjaoigj")
+
   loading.value = true
-  if(minDate.value>model.value.from  || model.value.from> maxDate.value){
+  if(minDate.value>model.value.from  || model.value.from> maxDate.value
+     || model.value.to>maxDate.value || model.value.to<minDate.value){
     loading.value = false
     wrongDateRangeDialog.value = true
-    console.log("sfjaofjaoigj")
+
     return
   }
   try {
@@ -116,14 +117,9 @@ function allowableRange(){
   console.log(minDate.value,maxDate.value)
   }
 async function deleteVcs() {
-  const devDIDs = ethereum.devDIDs()
-  const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
-  for (let i = 0; i < vcIds.length; i++) {
-    const deleteTxn = await devDIDs.delete_(vcIds[i])
-    const recipient = await deleteTxn.wait()
-    console.log(recipient)
-    deleting.value = true
+
     try {
+      deleting.value = true
       const devDIDs = ethereum.devDIDs()
       const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
       for (let i = 0; i < vcIds.length; i++) {
@@ -132,13 +128,17 @@ async function deleteVcs() {
         console.log(recipient)
       }
       await store.dispatch('fetchUserHeldVcs')
+
     } catch (err) {
       console.log(err)
+      deleting.value = false
+
     } finally {
       deleting.value = false
     }
-    await store.dispatch('fetchUserHeldVcs')
-  }
+
+
+
 }
 </script>
 
@@ -320,10 +320,13 @@ async function deleteVcs() {
                   <div class="q-pa-md">
                     <div class="q-pb-sm">
                       Pick A Validity Range
-                      Model: {{ model}}
+
 
                     </div>
 
+                    <div class="q-pb-sm">
+                      From {{model.from}} To {{model.to}}
+                    </div>
                     <q-date v-model="model" range
 
                     />
