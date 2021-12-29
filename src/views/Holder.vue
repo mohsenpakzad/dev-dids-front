@@ -3,11 +3,16 @@ import { ref, onBeforeUnmount } from 'vue'
 import { useStore } from 'vuex'
 import { useEthereum } from '../composables/useEthereum'
 import { BigNumber } from "ethers";
-import { useFormatting } from "../composables/useFormatting";
+import {useFormatting} from "../composables/useFormatting";
+import {matIcecream} from "@quasar/extras/material-icons";
 
 const store = useStore()
 const ethereum = useEthereum()
 const formatting = useFormatting()
+const minDate = ref('')
+const maxDate = ref('')
+const model = ref({ from: minDate.value, to: maxDate.value })
+
 
 const columns = [
   {
@@ -16,8 +21,17 @@ const columns = [
     label: 'subject',
     align: 'left',
   },
-  {name: 'issuer', align: 'center', label: 'Issuer', field: 'issuer', sortable: true},
-  {name: 'data', label: 'Data', field: 'data', sortable: true},
+  {
+    name: 'issuer',
+    align: 'center',
+    label: 'Issuer',
+    field: 'issuer',
+    sortable: true},
+  {
+    name: 'data',
+    label: 'Data',
+    field: 'data',
+    sortable: true},
   {
     name: 'validFrom',
     label: 'Issuance Date',
@@ -34,29 +48,48 @@ const loading = ref(false)
 const deleting = ref(false)
 const selectedVcs = ref<any[]>([])
 
+
 const confirmDeleteDialog = ref(false)
 const generatedVpDialog = ref(false)
 const copyVpDialog = ref(false)
+const setVpDateDialog = ref(false)
 
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
 
-function copy() {
+function copy(){
+
   navigator.clipboard.writeText(generatedVp.value[1]);
+
   /* Alert the copied text */
   copyVpDialog.value = true
+
 }
 
-async function generateVp() {
-  loading.value = true
 
+async function setDates(){
+  await allowableRange()
+  setVpDateDialog.value = true
+  console.log(minDate.value.substring(0,7))
+
+}
+async function generateVp() {
+
+  loading.value = true
+  if(minDate.value>model.value.from  || model.value.from> maxDate.value){
+    loading.value = false
+    alert('Your Validation dates must be between '+ minDate.value+' and '+ maxDate.value)
+    return
+  }
   try {
     const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
     generatedVp.value = await ethereum.generateVp(
         vcIds,
-        1, // TODO
-        12 // TODO
+        formatting.stringDateToTimestamp(model.value.from),
+        formatting.stringDateToTimestamp(model.value.to)
     )
+
+    console.log()
     generatedVpDialog.value = true
   } catch (err) {
     console.log(err)
@@ -65,21 +98,45 @@ async function generateVp() {
   }
 }
 
+function allowableRange(){
+
+    let min = selectedVcs.value[0].validFrom
+    let max = selectedVcs.value[0].validTo
+    for (let i = 1, len=selectedVcs.value.length; i < len; i++) {
+      let v1 = selectedVcs.value[i].validFrom
+      let v2 = selectedVcs.value[i].validTo
+
+      min = (v1 < min) ? v1 : min
+      max = (v2 > max) ? v2 : max
+    }
+  minDate.value = formatting.timestampToStringDate(min.toNumber())
+  maxDate.value = formatting.timestampToStringDate(max.toNumber())
+
+  console.log(minDate.value,maxDate.value)
+  }
 async function deleteVcs() {
-  deleting.value = true
-  try {
-    const devDIDs = ethereum.devDIDs()
-    const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
-    for (let i = 0; i < vcIds.length; i++) {
-      const deleteTxn = await devDIDs.delete_(vcIds[i])
-      const recipient = await deleteTxn.wait()
-      console.log(recipient)
+  const devDIDs = ethereum.devDIDs()
+  const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
+  for (let i = 0; i < vcIds.length; i++) {
+    const deleteTxn = await devDIDs.delete_(vcIds[i])
+    const recipient = await deleteTxn.wait()
+    console.log(recipient)
+    deleting.value = true
+    try {
+      const devDIDs = ethereum.devDIDs()
+      const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
+      for (let i = 0; i < vcIds.length; i++) {
+        const deleteTxn = await devDIDs.delete_(vcIds[i])
+        const recipient = await deleteTxn.wait()
+        console.log(recipient)
+      }
+      await store.dispatch('fetchUserHeldVcs')
+    } catch (err) {
+      console.log(err)
+    } finally {
+      deleting.value = false
     }
     await store.dispatch('fetchUserHeldVcs')
-  } catch (err) {
-    console.log(err)
-  } finally {
-    deleting.value = false
   }
 }
 </script>
@@ -216,14 +273,14 @@ async function deleteVcs() {
                         style="padding:11px 0 11px 0 !important;"
                         v-if="col.label === 'Issuer'"
                     >
-                      {{ formatting.formatLongStrings(col.value) }}
+                      {{ formatting.formatLongStrings(col.value)}}
                     </q-item-label>
                     <q-item-label
                         caption
                         style="padding:11px 0 11px 0 !important;"
                         v-else
                     >
-                      {{ col.value }}
+                      {{ col.value}}
                     </q-item-label>
                   </q-item-section>
 
@@ -242,7 +299,7 @@ async function deleteVcs() {
 
         <q-btn
             color="secondary"
-            @click="generateVp"
+            @click="setDates"
             :loading="loading"
             style="width: 150px;"
         >
@@ -253,7 +310,34 @@ async function deleteVcs() {
           </template>
         </q-btn>
 
+        <q-dialog v-model="setVpDateDialog">
+          <q-card>
+          <q-card-section bg-gray>
 
+
+
+                  <div class="q-pa-md">
+                    <div class="q-pb-sm">
+                      Model: {{ model}}
+                    </div>
+
+                    <q-date v-model="model" range
+
+                    />
+                  </div>
+
+
+          </q-card-section>
+            <q-card-actions align="center">
+              <q-btn flat label="Cancel" color="gray" v-close-popup/>
+              <q-btn flat label="Generate"
+                     @click="generateVp"
+                     color="primary"
+                     v-close-popup/>
+            </q-card-actions>
+
+          </q-card>
+        </q-dialog>
         <q-dialog
             v-model="generatedVpDialog"
             transition-show="scale"
@@ -342,7 +426,7 @@ async function deleteVcs() {
 
                   <q-dialog v-model="copyVpDialog" position='right'>
                     <q-card style="width: 350px">
-                      <q-linear-progress :value="1" color="green"/>
+                      <q-linear-progress :value="1" color="green" />
 
                       <q-card-section class="row items-center no-wrap">
                         <div>
@@ -379,10 +463,10 @@ async function deleteVcs() {
             @click="confirmDeleteDialog = true"
             style="margin-left: 5px; width: 130px;"
         >
-          <template v-slot:loading>
-            <q-spinner class="on-left"/>
-            Deleting...
-          </template>
+        <template v-slot:loading>
+          <q-spinner class="on-left"/>
+          Deleting...
+        </template>
         </q-btn>
 
         <q-dialog v-model="confirmDeleteDialog">
