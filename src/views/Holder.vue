@@ -101,17 +101,17 @@ async function generateVp() {
 
 function allowableRange(){
 
-    let min = selectedVcs.value[0].validFrom
-    let max = selectedVcs.value[0].validTo
+    let max = selectedVcs.value[0].validFrom
+    let min = selectedVcs.value[0].validTo
     for (let i = 1, len=selectedVcs.value.length; i < len; i++) {
       let v1 = selectedVcs.value[i].validFrom
       let v2 = selectedVcs.value[i].validTo
 
-      min = (v1 < min) ? v1 : min
-      max = (v2 > max) ? v2 : max
+      max = (v1 > max) ? v1 : max
+      min = (v2 < min) ? v2 : min
     }
-  minDate.value = formatting.timestampToStringDate(min.toNumber())
-  maxDate.value = formatting.timestampToStringDate(max.toNumber())
+  minDate.value = formatting.timestampToStringDate(max.toNumber())
+  maxDate.value = formatting.timestampToStringDate(min.toNumber())
 
   console.log(minDate.value,maxDate.value)
   }
