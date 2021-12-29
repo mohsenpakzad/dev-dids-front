@@ -65,7 +65,9 @@ function assignVcId(thisVcId: number){
 }
 
 
-function assignVcStatus(thisVcStat: boolean){
+function assignVcStatus(thisVcId: number, thisVcStat: boolean){
+
+  vcId.value = thisVcId
 
   prompt.value = true
   vcStat.value = thisVcStat
@@ -75,6 +77,17 @@ function assignVcStatus(thisVcStat: boolean){
 async function revoke(thisVcId: number){
 
   const tnx = await ethereum.devDIDs().revoke(thisVcId)
+  await tnx.wait()
+
+  store.dispatch('fetchUserIssuedVcs')
+
+}
+
+async function changeVcStat(thisVcId: number, thisVcStat: boolean){
+
+  console.log(thisVcId)
+
+  const tnx = await ethereum.devDIDs().setSuspended(thisVcId, thisVcStat)
   await tnx.wait()
 
   store.dispatch('fetchUserIssuedVcs')
@@ -257,12 +270,12 @@ function reset() {
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == true">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="block" class="data_icon" @click="assignVcStatus(props.row.suspended)"/>
+                    <q-icon color="teal" name="block" class="data_icon" @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == false">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="done_all" class="data_icon" @click="assignVcStatus(props.row.suspended)"/>
+                    <q-icon color="teal" name="done_all" class="data_icon" @click="assignVcStatus(props.row.id, props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                 </q-tr>
@@ -374,7 +387,7 @@ function reset() {
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Unsuspend" color="red" v-close-popup @click.prevent="revoke(vcId)"/>
+                  <q-btn flat label="Unsuspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, false)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -387,7 +400,7 @@ function reset() {
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Suspend" color="red" v-close-popup @click.prevent="revoke(vcId)"/>
+                  <q-btn flat label="Suspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, true)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
