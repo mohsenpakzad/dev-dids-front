@@ -21,6 +21,7 @@ const issueForm = reactive({
 })
 
 const tab = ref('Issues')
+const vcId = ref(0)
 
 
 const columns = ref([
@@ -53,6 +54,23 @@ async function issue() {
   )
   const recipient = await issueTxn.wait()
   console.log(recipient)
+}
+
+
+function assignVcId(thisVcId: number){
+
+  confirm.value = true
+  vcId.value = thisVcId
+
+}
+
+async function revoke(thisVcId: number){
+
+  const tnx = await ethereum.devDIDs().revoke(thisVcId)
+  await tnx.wait()
+
+  store.dispatch('fetchUserIssuedVcs')
+
 }
 
 function reset() {
@@ -232,7 +250,7 @@ function reset() {
                   <q-td key="more" :props="props" class="table_data">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
                     <q-icon color="teal" name="more_time" class="data_icon" @click="prompt = true"/>
-                    <q-icon color="red" name="delete_forever" class="data_icon" @click="confirm = true"/>
+                    <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                 </q-tr>
               </template>
@@ -327,7 +345,7 @@ function reset() {
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Revoke" color="red" v-close-popup/>
+                  <q-btn flat label="Revoke" color="red" v-close-popup @click.prevent="revoke(vcId)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
