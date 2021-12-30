@@ -5,6 +5,8 @@ import { useEthereum } from '../composables/useEthereum'
 import { useFieldRules } from '../composables/useFieldRules'
 import { useFormatting } from '../composables/useFormatting'
 
+import BannerConnectWallet from '../components/BannerConnectWallet.vue'
+
 
 const store = useStore()
 const ethereum = useEthereum()
@@ -45,75 +47,65 @@ const confirm = ref(false)
 const prompt = ref(false)
 const alert = ref(false)
 const error_kind = ref('')
+const loading = ref(false)
 
 
 async function issue() {
-  
-  if(store.getters.account.toLowerCase() == issueForm.holder.toLowerCase())
-  {
+
+  if (!store.getters.account) return
+
+  if (store.getters.account.toLowerCase() == issueForm.holder.toLowerCase()) {
     alert.value = true
     error_kind.value = '1'
     issueForm.holder = ''
-  }
-
-  else if(formatting.stringDateToTimestamp(issueForm.validFrom) >= formatting.stringDateToTimestamp(issueForm.validTo))
-  {
+  } else if (formatting.stringDateToTimestamp(issueForm.validFrom) >=
+      formatting.stringDateToTimestamp(issueForm.validTo)) {
     alert.value = true
     error_kind.value = '2'
     issueForm.validTo = ''
+  } else {
+    loading.value = true
+    try {
+      const issueTxn = await ethereum.devDIDs().issue(
+          issueForm.holder,
+          issueForm.subject,
+          issueForm.data,
+          formatting.stringDateToTimestamp(issueForm.validFrom),
+          formatting.stringDateToTimestamp(issueForm.validTo),
+      )
+      const recipient = await issueTxn.wait()
+      console.log(recipient)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      loading.value = false
+    }
   }
-
-  else
-  {
-    const issueTxn = await ethereum.devDIDs().issue(
-        issueForm.holder,
-        issueForm.subject,
-        issueForm.data,
-        formatting.stringDateToTimestamp(issueForm.validFrom),
-        formatting.stringDateToTimestamp(issueForm.validTo),
-    )
-    const recipient = await issueTxn.wait()
-    console.log(recipient)
-  }
-
 }
 
-
-function assignVcId(thisVcId: number){
-
+function assignVcId(thisVcId: number) {
   confirm.value = true
   vcId.value = thisVcId
-
 }
 
-
-function assignVcStatus(thisVcId: number, thisVcStat: boolean){
-
+function assignVcStatus(thisVcId: number, thisVcStat: boolean) {
   vcId.value = thisVcId
-
   prompt.value = true
   vcStat.value = thisVcStat
-
 }
 
-async function revoke(thisVcId: number){
-
+async function revoke(thisVcId: number) {
   const tnx = await ethereum.devDIDs().revoke(thisVcId)
   await tnx.wait()
 
-  store.dispatch('fetchUserIssuedVcs')
-
+  await store.dispatch('fetchUserIssuedVcs')
 }
 
-async function changeVcStat(thisVcId: number, thisVcStat: boolean){
-
-  console.log(thisVcId)
-
+async function changeVcStat(thisVcId: number, thisVcStat: boolean) {
   const tnx = await ethereum.devDIDs().setSuspended(thisVcId, thisVcStat)
   await tnx.wait()
 
-  store.dispatch('fetchUserIssuedVcs')
-
+  await store.dispatch('fetchUserIssuedVcs')
 }
 
 function reset() {
@@ -149,7 +141,7 @@ function reset() {
           class="bg-grey-3"
       >
         <q-tab
-            class="text-green"
+            class="text-indigo"
             name="Issues"
             icon="check_circle"
             label="Issue"
@@ -173,7 +165,7 @@ function reset() {
 
       <template v-if="tab === 'Issues'">
         <q-card-section class="div_issuer_header">
-          <q-icon color="green" name="check_circle"/>
+          <q-icon color="indigo" name="check_circle"/>
           Issue
         </q-card-section>
 
@@ -250,9 +242,21 @@ function reset() {
             <q-btn
                 label="Submit"
                 icon="send"
+                :loading="loading"
                 color="secondary"
                 @click.prevent="issue"
-            />
+            >
+              <template v-slot:loading>
+                <q-spinner-puff class="on-left"/>
+                Issuing...
+              </template>
+
+              <q-popup-proxy v-if="!store.getters.account">
+                <BannerConnectWallet/>
+              </q-popup-proxy>
+
+            </q-btn>
+
             <q-btn
                 label="Reset"
                 icon-right="cancel"
@@ -281,7 +285,7 @@ function reset() {
             </q-card-section>
 
             <q-card-actions align="right">
-              <q-btn flat label="OK" color="primary" v-close-popup />
+              <q-btn flat label="OK" color="primary" v-close-popup/>
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -323,12 +327,14 @@ function reset() {
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == true">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="yellow-8" name="lock" class="data_icon" @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
+                    <q-icon color="yellow-8" name="lock" class="data_icon"
+                            @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == false">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="green-5" name="lock_open" class="data_icon" @click="assignVcStatus(props.row.id, props.row.suspended)"/>
+                    <q-icon color="green-5" name="lock_open" class="data_icon"
+                            @click="assignVcStatus(props.row.id, props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                 </q-tr>
@@ -433,7 +439,7 @@ function reset() {
             </q-dialog>
             <!-- Dialog Revoke Ends -->
 
-            
+
             <!-- Dialog Suspened Begins -->
             <q-dialog v-model="prompt" v-if="vcStat == true">
               <q-card>
@@ -443,7 +449,8 @@ function reset() {
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Unsuspend" color="green-5" v-close-popup @click.prevent="changeVcStat(vcId, false)"/>
+                  <q-btn flat label="Unsuspend" color="green-5" v-close-popup
+                         @click.prevent="changeVcStat(vcId, false)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -460,7 +467,7 @@ function reset() {
                 </q-card-actions>
               </q-card>
             </q-dialog>
-            
+
             <!-- Dialog Suspened Ends -->
 
             <!-- Dialog Extend Begins -->
@@ -623,8 +630,7 @@ td:first-child {
   margin-bottom: 5px;
 }
 
-.dialog_header_error
-{
+.dialog_header_error {
   background-color: #FF293F !important;
   margin-bottom: 5px;
 }
@@ -634,11 +640,10 @@ td:first-child {
   margin: 0 auto 10px !important;
 }
 
-.avatar_error
-{
-  position:relative;
-  left:4px;
-  color:#980606;
+.avatar_error {
+  position: relative;
+  left: 4px;
+  color: #980606;
 }
 
 .header_info, .header_error {
@@ -646,17 +651,15 @@ td:first-child {
   font-size: 18px !important;
 }
 
-.header_error
-{
-  color:#980606;
-  font-size:21px !important;
+.header_error {
+  color: #980606;
+  font-size: 21px !important;
 }
 
-.text_error
-{
-  margin-top:24px;
-  margin-bottom:-20px;
-  font-size:18px;
+.text_error {
+  margin-top: 24px;
+  margin-bottom: -20px;
+  font-size: 18px;
 }
 
 .dialog_info, .dialog_error {
