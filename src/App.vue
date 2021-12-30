@@ -47,12 +47,14 @@ onBeforeMount(async () => {
         <q-tabs
             v-model="tab"
             dense
-            class="bg-white text-black q-mt-sm"
+            indicator-color="transparent"
+            active-class = "drawer_tab2"
+            class="bg-white text-black q-mt-sm the_tab"
             style="max-width: fit-content;
             text-align: center;
             margin: 10px auto 0 45%;
             border-radius: 20px;
-            position: center"
+            position: center;"
         >
           <q-route-tab
               class="drawer_tab"
@@ -137,8 +139,21 @@ onBeforeMount(async () => {
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
 }
 
+.the_tab
+{
+  position:relative;
+  right:40px;
+}
+
 .drawer_tab {
   margin: 4px;
   border-radius: 20px;
+}
+
+.drawer_tab2 {
+  /* background-color:#9BFF9E !important;
+  color:#11A816 !important; */
+  background-color:#E6E6E6 !important;
+  color:#000 !important;
 }
 </style>
