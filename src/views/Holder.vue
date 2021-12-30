@@ -18,6 +18,7 @@ const columns = [
     required: true,
     label: 'subject',
     align: 'left',
+    field: 'subject'
   },
   {
     name: 'issuer',
