@@ -53,6 +53,14 @@ async function issue() {
   {
     alert.value = true
     error_kind.value = '1'
+    issueForm.holder = ''
+  }
+
+  else if(formatting.stringDateToTimestamp(issueForm.validFrom) >= formatting.stringDateToTimestamp(issueForm.validTo))
+  {
+    alert.value = true
+    error_kind.value = '2'
+    issueForm.validTo = ''
   }
 
   else
@@ -154,13 +162,13 @@ function reset() {
             label="VCs"
             style="padding:10px 0 10px 0 !important;"
         />
-        <q-tab
+        <!-- <q-tab
             class="text-red"
             name="Suspend"
             icon="lock"
             label="Suspend"
             style="padding:10px 0 10px 0 !important;"
-        />
+        /> -->
       </q-tabs>
 
       <template v-if="tab === 'Issues'">
@@ -268,6 +276,10 @@ function reset() {
               Holder and Issuer have same addresses
             </q-card-section>
 
+            <q-card-section class="q-pt-none text_error" v-if="error_kind === '2'">
+              Expiration date is earlier or equal to the issuance date
+            </q-card-section>
+
             <q-card-actions align="right">
               <q-btn flat label="OK" color="primary" v-close-popup />
             </q-card-actions>
@@ -311,12 +323,12 @@ function reset() {
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == true">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="block" class="data_icon" @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
+                    <q-icon color="yellow-8" name="lock" class="data_icon" @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == false">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="done_all" class="data_icon" @click="assignVcStatus(props.row.id, props.row.suspended)"/>
+                    <q-icon color="green-5" name="lock_open" class="data_icon" @click="assignVcStatus(props.row.id, props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                 </q-tr>
@@ -342,7 +354,7 @@ function reset() {
                     </q-item-section>
                     <div class="dialog_info_items1">Holder</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">{{ props.row.holder }}</div>
+                    <div class="dialog_info_items3"></div>
                   </q-item>
                   <!-- Holder Ends -->
 
@@ -426,12 +438,12 @@ function reset() {
             <q-dialog v-model="prompt" v-if="vcStat == true">
               <q-card>
                 <q-card-section class="row items-center">
-                  <q-avatar font-size="40px" icon="delete_forever" text-color="red"/>
+                  <q-avatar font-size="40px" icon="lock_open" text-color="green-5"/>
                   <span class="q-ml-xs">Are you sure You want to unsuspend this VC?</span>
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Unsuspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, false)"/>
+                  <q-btn flat label="Unsuspend" color="green-5" v-close-popup @click.prevent="changeVcStat(vcId, false)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -439,12 +451,12 @@ function reset() {
             <q-dialog v-model="prompt" v-if="vcStat == false">
               <q-card>
                 <q-card-section class="row items-center">
-                  <q-avatar font-size="40px" icon="delete_forever" text-color="red"/>
+                  <q-avatar font-size="40px" icon="lock" text-color="yellow-8"/>
                   <span class="q-ml-xs">Are you sure You want to suspend this VC?</span>
                 </q-card-section>
                 <q-card-actions align="center">
                   <q-btn flat label="Cancel" color="primary" v-close-popup/>
-                  <q-btn flat label="Suspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, true)"/>
+                  <q-btn flat label="Suspend" color="yellow-8" v-close-popup @click.prevent="changeVcStat(vcId, true)"/>
                 </q-card-actions>
               </q-card>
             </q-dialog>
