@@ -22,7 +22,7 @@ const issueForm = reactive({
 
 const tab = ref('Issues')
 const vcId = ref(0)
-
+const selectedVc = ref(0)
 
 const columns = ref([
   {
@@ -42,18 +42,31 @@ const columns = ref([
 const dialog = ref(false)
 const confirm = ref(false)
 const prompt = ref(false)
+const alert = ref(false)
+const error_kind = ref('')
 
 
 async function issue() {
-  const issueTxn = await ethereum.devDIDs().issue(
-      issueForm.holder,
-      issueForm.subject,
-      issueForm.data,
-      formatting.stringDateToTimestamp(issueForm.validFrom),
-      formatting.stringDateToTimestamp(issueForm.validTo),
-  )
-  const recipient = await issueTxn.wait()
-  console.log(recipient)
+  
+  if(store.getters.account.toLowerCase() == issueForm.holder.toLowerCase())
+  {
+    alert.value = true
+    error_kind.value = '1'
+  }
+
+  else
+  {
+    const issueTxn = await ethereum.devDIDs().issue(
+        issueForm.holder,
+        issueForm.subject,
+        issueForm.data,
+        formatting.stringDateToTimestamp(issueForm.validFrom),
+        formatting.stringDateToTimestamp(issueForm.validTo),
+    )
+    const recipient = await issueTxn.wait()
+    console.log(recipient)
+  }
+
 }
 
 
@@ -117,6 +130,13 @@ function reset() {
             name="VCs"
             icon="badge"
             label="VCs"
+            style="padding:10px 0 10px 0 !important;"
+        />
+        <q-tab
+            class="text-red"
+            name="Suspend"
+            icon="lock"
+            label="Suspend"
             style="padding:10px 0 10px 0 !important;"
         />
       </q-tabs>
@@ -212,6 +232,26 @@ function reset() {
             />
           </div>
         </q-form>
+
+        <!-- Dialog Form Error Begins -->
+        <q-dialog v-model="alert">
+          <q-card class="dialog_error">
+            <q-card-section class="items-center dialog_header_error">
+              <q-avatar font-size="50px" icon="cancel"
+                        class="avatar_error"/>
+              <span class="q-ml-sm header_error">Error</span>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none text_error" v-if="error_kind === '1'">
+              Holder and Issuer have same addresses
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- Dialog Form Error Ends -->
       </template>
 
 
@@ -273,16 +313,9 @@ function reset() {
                     <q-item-section avatar>
                       <q-icon rounded color="teal" size="34px" name="manage_accounts"/>
                     </q-item-section>
-
                     <div class="dialog_info_items1">Holder</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">0x703727c32AfE91BCA9 F70817CB15FA8045F40D96</div>
-
-                    <!-- <q-item-section class="dialog_info_items1">Holder</q-item-section>
-                    <q-item-section class="dialog_info_items2">:</q-item-section>
-                    <q-item-section
-                    class="dialog_info_items3">
-                    0x703727c32AfE82CFf9fA58280159c10e0fF40D96</q-item-section> -->
+                    <div class="dialog_info_items3">{{ props.row.holder }}</div>
                   </q-item>
                   <!-- Holder Ends -->
 
@@ -321,7 +354,17 @@ function reset() {
                     </q-item-section>
                     <div class="dialog_info_items1">Validity</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">From 26/12/2021 To 26/12/2022</div>
+                    <div class="dialog_info_items3">
+                      From
+                      <span
+                          style="color:green; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
+                        26/12/2021
+                      </span>
+                      To
+                      <span style="color:crimson; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
+                        26/12/2022
+                      </span>
+                    </div>
                   </q-item>
                   <!-- Date Ends -->
 
@@ -512,17 +555,43 @@ td:first-child {
   margin-bottom: 5px;
 }
 
-.avatar_info {
+.dialog_header_error
+{
+  background-color: #FF293F !important;
+  margin-bottom: 5px;
+}
+
+.avatar_info, .avatar_error {
   display: block !important;
   margin: 0 auto 10px !important;
 }
 
-.header_info {
+.avatar_error
+{
+  position:relative;
+  left:4px;
+  color:#980606;
+}
+
+.header_info, .header_error {
   display: block !important;
   font-size: 18px !important;
 }
 
-.dialog_info {
+.header_error
+{
+  color:#980606;
+  font-size:21px !important;
+}
+
+.text_error
+{
+  margin-top:24px;
+  margin-bottom:-20px;
+  font-size:18px;
+}
+
+.dialog_info, .dialog_error {
   width: 95% !important;
   max-width: 600px !important;
 }

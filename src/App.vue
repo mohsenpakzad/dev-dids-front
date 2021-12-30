@@ -35,6 +35,8 @@ onBeforeMount(async () => {
 
     <q-toolbar>
 
+      <!-- <q-img src="/src/assets/bc2.png" class="bc_image"/> -->
+      
       <q-btn
           flat
           dense
@@ -139,10 +141,17 @@ onBeforeMount(async () => {
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
 }
 
+.bc_image
+{
+  width:50px !important;
+}
+
 .the_tab
 {
-  position:relative;
-  right:40px;
+  /* position:relative; */
+  position:absolute;
+  right:39.5%;
+  top:-5px;
 }
 
 .drawer_tab {
