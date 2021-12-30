@@ -75,6 +75,8 @@ async function issue() {
       )
       const recipient = await issueTxn.wait()
       console.log(recipient)
+
+      await store.dispatch('fetchUserIssuedVcs')
     } catch (err) {
       console.log(err)
     } finally {
