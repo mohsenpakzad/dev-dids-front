@@ -23,6 +23,7 @@ const issueForm = reactive({
 const tab = ref('Issues')
 const vcId = ref(0)
 const selectedVc = ref(0)
+const vcStat = ref(false)
 
 const columns = ref([
   {
@@ -35,7 +36,7 @@ const columns = ref([
   },
   {name: 'subject', align: 'center', label: 'Subject', field: 'subject', headerStyle: 'font-size:17px'},
   {name: 'data', align: 'center', label: 'Data', field: 'data', headerStyle: 'font-size:17px'},
-  {name: 'more', align: 'center', label: 'Extend, Revoke', field: 'more', headerStyle: 'font-size:17px'},
+  {name: 'more', align: 'center', label: 'Status  , Revoke', field: 'more', headerStyle: 'font-size:17px'},
 ])
 
 
@@ -77,9 +78,30 @@ function assignVcId(thisVcId: number){
 
 }
 
+
+function assignVcStatus(thisVcId: number, thisVcStat: boolean){
+
+  vcId.value = thisVcId
+
+  prompt.value = true
+  vcStat.value = thisVcStat
+
+}
+
 async function revoke(thisVcId: number){
 
   const tnx = await ethereum.devDIDs().revoke(thisVcId)
+  await tnx.wait()
+
+  store.dispatch('fetchUserIssuedVcs')
+
+}
+
+async function changeVcStat(thisVcId: number, thisVcStat: boolean){
+
+  console.log(thisVcId)
+
+  const tnx = await ethereum.devDIDs().setSuspended(thisVcId, thisVcStat)
   await tnx.wait()
 
   store.dispatch('fetchUserIssuedVcs')
@@ -287,9 +309,14 @@ function reset() {
                   <q-td key="data" :props="props" class="table_data" @click="dialog = true">
                     {{ props.row.data }}
                   </q-td>
-                  <q-td key="more" :props="props" class="table_data">
+                  <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == true">
                     <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
-                    <q-icon color="teal" name="more_time" class="data_icon" @click="prompt = true"/>
+                    <q-icon color="teal" name="block" class="data_icon" @click="assignVcStatus(props.row.id ,props.row.suspended)"/>
+                    <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
+                  </q-td>
+                  <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == false">
+                    <!-- <q-icon color="orange" name="info" class="data_icon"/> -->
+                    <q-icon color="teal" name="done_all" class="data_icon" @click="assignVcStatus(props.row.id, props.row.suspended)"/>
                     <q-icon color="red" name="delete_forever" class="data_icon" @click="assignVcId(props.row.id)"/>
                   </q-td>
                 </q-tr>
@@ -394,13 +421,42 @@ function reset() {
             </q-dialog>
             <!-- Dialog Revoke Ends -->
 
+            
+            <!-- Dialog Suspened Begins -->
+            <q-dialog v-model="prompt" v-if="vcStat == true">
+              <q-card>
+                <q-card-section class="row items-center">
+                  <q-avatar font-size="40px" icon="delete_forever" text-color="red"/>
+                  <span class="q-ml-xs">Are you sure You want to unsuspend this VC?</span>
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn flat label="Cancel" color="primary" v-close-popup/>
+                  <q-btn flat label="Unsuspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, false)"/>
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+
+            <q-dialog v-model="prompt" v-if="vcStat == false">
+              <q-card>
+                <q-card-section class="row items-center">
+                  <q-avatar font-size="40px" icon="delete_forever" text-color="red"/>
+                  <span class="q-ml-xs">Are you sure You want to suspend this VC?</span>
+                </q-card-section>
+                <q-card-actions align="center">
+                  <q-btn flat label="Cancel" color="primary" v-close-popup/>
+                  <q-btn flat label="Suspend" color="red" v-close-popup @click.prevent="changeVcStat(vcId, true)"/>
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+            
+            <!-- Dialog Suspened Ends -->
+
             <!-- Dialog Extend Begins -->
-            <q-dialog v-model="prompt">
+            <!-- <q-dialog v-model="prompt">
               <q-card style="min-width: 350px">
                 <q-card-section>
                   <q-item>
                     <q-item-section avatar>
-                      <!-- <q-icon rounded size="34px" name="more_time" color="teal"/> -->
                       <q-icon rounded size="34px" name="auto_delete" style="color:#F31E48;"/>
                     </q-item-section>
                     <div class="dialog_info_items1">Validity</div>
@@ -446,7 +502,7 @@ function reset() {
                   <q-btn flat label="Extend" color="green-10" v-close-popup/>
                 </q-card-actions>
               </q-card>
-            </q-dialog>
+            </q-dialog> -->
             <!-- Dialog Extend Ends -->
           </div>
           <!-- Dialogs End -->
