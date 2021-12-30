@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useEthereum } from '../composables/useEthereum'
-import { BigNumber } from "ethers";
-import {useFormatting} from "../composables/useFormatting";
-import {matIcecream} from "@quasar/extras/material-icons";
+import { BigNumber } from 'ethers'
+import { useFormatting } from '../composables/useFormatting'
+
+import BannerConnectWallet from '../components/BannerConnectWallet.vue'
 
 const store = useStore()
 const ethereum = useEthereum()
 const formatting = useFormatting()
-const minDate = ref('')
-const maxDate = ref('')
-const model = ref({ from: minDate.value, to: maxDate.value })
 
 
 const columns = [
@@ -26,12 +24,14 @@ const columns = [
     align: 'center',
     label: 'Issuer',
     field: 'issuer',
-    sortable: true},
+    sortable: true
+  },
   {
     name: 'data',
     label: 'Data',
     field: 'data',
-    sortable: true},
+    sortable: true
+  },
   {
     name: 'validFrom',
     label: 'Issuance Date',
@@ -45,9 +45,13 @@ const columns = [
 ]
 
 const loading = ref(false)
+const tab = ref('holder')
 const deleting = ref(false)
 const selectedVcs = ref<any[]>([])
 
+const minDate = ref('')
+const maxDate = ref('')
+const model = ref({from: minDate.value, to: maxDate.value})
 
 const confirmDeleteDialog = ref(false)
 const generatedVpDialog = ref(false)
@@ -57,27 +61,24 @@ const wrongDateRangeDialog = ref(false)
 const generatedVp = ref<any>(null)
 const searchFilter = ref('')
 
-function copy(){
-
+function copy() {
   navigator.clipboard.writeText(generatedVp.value[1]);
-
-  /* Alert the copied text */
   copyVpDialog.value = true
-
 }
 
+async function setDates() {
+  if (!store.getters.account) return
 
-async function setDates(){
   await allowableRange()
   setVpDateDialog.value = true
-  console.log(minDate.value.substring(0,7))
-
+  console.log(minDate.value.substring(0, 7))
 }
+
 async function generateVp() {
 
   loading.value = true
-  if(minDate.value>model.value.from  || model.value.from> maxDate.value
-     || model.value.to>maxDate.value || model.value.to<minDate.value){
+  if (minDate.value > model.value.from || model.value.from > maxDate.value
+      || model.value.to > maxDate.value || model.value.to < minDate.value) {
     loading.value = false
     wrongDateRangeDialog.value = true
 
@@ -100,45 +101,44 @@ async function generateVp() {
   }
 }
 
-function allowableRange(){
+function allowableRange() {
 
-    let max = selectedVcs.value[0].validFrom
-    let min = selectedVcs.value[0].validTo
-    for (let i = 1, len=selectedVcs.value.length; i < len; i++) {
-      let v1 = selectedVcs.value[i].validFrom
-      let v2 = selectedVcs.value[i].validTo
+  let max = selectedVcs.value[0].validFrom
+  let min = selectedVcs.value[0].validTo
+  for (let i = 1, len = selectedVcs.value.length; i < len; i++) {
+    let v1 = selectedVcs.value[i].validFrom
+    let v2 = selectedVcs.value[i].validTo
 
-      max = (v1 > max) ? v1 : max
-      min = (v2 < min) ? v2 : min
-    }
+    max = (v1 > max) ? v1 : max
+    min = (v2 < min) ? v2 : min
+  }
   minDate.value = formatting.timestampToStringDate(max.toNumber())
   maxDate.value = formatting.timestampToStringDate(min.toNumber())
 
-  console.log(minDate.value,maxDate.value)
-  }
+  console.log(minDate.value, maxDate.value)
+}
+
 async function deleteVcs() {
-
-    try {
-      deleting.value = true
-      const devDIDs = ethereum.devDIDs()
-      const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
-      for (let i = 0; i < vcIds.length; i++) {
-        const deleteTxn = await devDIDs.delete_(vcIds[i])
-        const recipient = await deleteTxn.wait()
-        console.log(recipient)
-      }
-      await store.dispatch('fetchUserHeldVcs')
-
-    } catch (err) {
-      console.log(err)
-      deleting.value = false
-
-    } finally {
-      deleting.value = false
+  deleting.value = true
+  try {
+    const devDIDs = ethereum.devDIDs()
+    const vcIds = selectedVcs.value.map(vc => BigNumber.from(vc.id))
+    for (let i = 0; i < vcIds.length; i++) {
+      const deleteTxn = await devDIDs.delete_(vcIds[i])
+      const recipient = await deleteTxn.wait()
+      console.log(recipient)
     }
+    await store.dispatch('fetchUserHeldVcs')
+  } catch (err) {
+    console.log(err)
+  } finally {
+    deleting.value = false
+  }
+}
 
-
-
+function openDeleteDialog() {
+  if (!store.getters.account || selectedVcs.value.length === 0) return
+  confirmDeleteDialog.value = true
 }
 </script>
 
@@ -159,12 +159,13 @@ async function deleteVcs() {
         bordered
     >
       <q-tabs
+          v-model="tab"
           align="justify"
           class="bg-grey-3"
       >
         <q-tab
             class="text-accent"
-            name="Holder"
+            name="holder"
             icon="account_circle"
             label="Holder"
         />
@@ -274,14 +275,14 @@ async function deleteVcs() {
                         style="padding:11px 0 11px 0 !important;"
                         v-if="col.label === 'Issuer'"
                     >
-                      {{ formatting.formatLongStrings(col.value)}}
+                      {{ formatting.formatLongStrings(col.value) }}
                     </q-item-label>
                     <q-item-label
                         caption
                         style="padding:11px 0 11px 0 !important;"
                         v-else
                     >
-                      {{ col.value}}
+                      {{ col.value }}
                     </q-item-label>
                   </q-item-section>
 
@@ -305,38 +306,41 @@ async function deleteVcs() {
             style="width: 150px;"
         >
           Generate VP
+
           <template v-slot:loading>
             <q-spinner-gears class="on-left"/>
             Generating...
           </template>
+
+          <q-popup-proxy v-if="!store.getters.account">
+            <BannerConnectWallet/>
+          </q-popup-proxy>
         </q-btn>
 
         <q-dialog v-model="setVpDateDialog">
           <q-card>
-          <q-card-section bg-gray>
+            <q-card-section bg-gray>
 
 
-
-                  <div class="q-pa-md">
-                    <div class="q-pb-sm">
-                      Pick A Validity Range
-
-
-                    </div>
-
-                    <div class="q-pb-sm">
-                      From {{model.from}} To {{model.to}}
-                    </div>
-                    <q-date v-model="model" range
-
-                    />
+              <div class="q-pa-md">
+                <div class="q-pb-sm">
+                  Pick A Validity Range
 
 
+                </div>
 
-                  </div>
+                <div class="q-pb-sm">
+                  From {{ model.from }} To {{ model.to }}
+                </div>
+                <q-date v-model="model" range
+
+                />
 
 
-          </q-card-section>
+              </div>
+
+
+            </q-card-section>
             <q-card-actions align="center">
               <q-btn flat label="Cancel" color="gray" v-close-popup/>
               <q-btn flat label="Generate"
@@ -349,11 +353,12 @@ async function deleteVcs() {
         </q-dialog>
         <q-dialog v-model="wrongDateRangeDialog" position='top'>
           <q-card style="width: 350px">
-            <q-linear-progress :value="1" color="red" />
+            <q-linear-progress :value="1" color="red"/>
 
             <q-card-section class="row items-center no-wrap">
               <div>
-                <div class="text-weight-bold">Your Validation dates must be between {{ minDate}} and {{maxDate}}</div>
+                <div class="text-weight-bold">Your Validation dates must be between {{ minDate }} and {{ maxDate }}
+                </div>
 
               </div>
 
@@ -437,18 +442,19 @@ async function deleteVcs() {
                 <div class="dialog_info_items3">
                   {{ formatting.formatLongStrings(generatedVp[1]) }}
                   <q-btn flat dense>
-                    <q-icon @click="copy"
-                            rounded
-                            name="content_copy"
-                            size="20px"
-                            style="color:gray;"
+                    <q-icon
+                        @click="copy"
+                        rounded
+                        name="content_copy"
+                        size="20px"
+                        style="color:gray;"
                     />
 
                   </q-btn>
 
                   <q-dialog v-model="copyVpDialog" position='right'>
                     <q-card style="width: 350px">
-                      <q-linear-progress :value="1" color="green" />
+                      <q-linear-progress :value="1" color="green"/>
 
                       <q-card-section class="row items-center no-wrap">
                         <div>
@@ -459,7 +465,6 @@ async function deleteVcs() {
                       </q-card-section>
                     </q-card>
                   </q-dialog>
-
 
 
                 </div>
@@ -483,13 +488,17 @@ async function deleteVcs() {
             type="Delete"
             color="red"
             :loading="deleting"
-            @click="confirmDeleteDialog = true"
+            @click="openDeleteDialog"
             style="margin-left: 5px; width: 130px;"
         >
-        <template v-slot:loading>
-          <q-spinner class="on-left"/>
-          Deleting...
-        </template>
+          <template v-slot:loading>
+            <q-spinner class="on-left"/>
+            Deleting...
+          </template>
+
+          <q-popup-proxy v-if="!store.getters.account">
+            <BannerConnectWallet/>
+          </q-popup-proxy>
         </q-btn>
 
         <q-dialog v-model="confirmDeleteDialog">
@@ -503,10 +512,12 @@ async function deleteVcs() {
 
             <q-card-actions align="center">
               <q-btn flat label="Cancel" color="primary" v-close-popup/>
-              <q-btn flat label="Delete"
-                     @click="deleteVcs"
-                     color="red"
-                     v-close-popup/>
+              <q-btn
+                  flat label="Delete"
+                  @click="deleteVcs"
+                  color="red"
+                  v-close-popup
+              />
             </q-card-actions>
 
           </q-card>
