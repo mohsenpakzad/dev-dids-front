@@ -2,7 +2,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { useFormatting } from "./composables/useFormatting"
+import { useFormatting } from './composables/useFormatting'
 
 const store = useStore()
 const router = useRouter()
@@ -36,7 +36,7 @@ onBeforeMount(async () => {
     <q-toolbar>
 
       <!-- <q-img src="/src/assets/bc2.png" class="bc_image"/> -->
-      
+
       <q-btn
           flat
           dense
@@ -50,7 +50,7 @@ onBeforeMount(async () => {
             v-model="tab"
             dense
             indicator-color="transparent"
-            active-class = "drawer_tab2"
+            active-class="drawer_tab2"
             class="bg-white text-black q-mt-sm the_tab"
             style="max-width: fit-content;
             text-align: center;
@@ -141,17 +141,15 @@ onBeforeMount(async () => {
   background-image: linear-gradient(#f7ebf3, #f7f8fa);
 }
 
-.bc_image
-{
-  width:50px !important;
+.bc_image {
+  width: 50px !important;
 }
 
-.the_tab
-{
+.the_tab {
   /* position:relative; */
-  position:absolute;
-  right:39.5%;
-  top:-5px;
+  position: absolute;
+  right: 39.5%;
+  top: -3px;
 }
 
 .drawer_tab {
@@ -162,7 +160,7 @@ onBeforeMount(async () => {
 .drawer_tab2 {
   /* background-color:#9BFF9E !important;
   color:#11A816 !important; */
-  background-color:#E6E6E6 !important;
-  color:#000 !important;
+  background-color: #E6E6E6 !important;
+  color: #000 !important;
 }
 </style>
