@@ -14,6 +14,7 @@ const verifyForm = reactive({
 })
 
 const loading = ref(false)
+const tab = ref('verify')
 const verifyResult = ref<Array<string | boolean>>([])
 
 async function verify() {
@@ -33,6 +34,7 @@ async function verify() {
 }
 
 function reset() {
+
   verifyForm.base64Vp = ''
   verifyForm.holderAddress = ''
   verifyResult.value = []
@@ -56,6 +58,7 @@ function reset() {
     >
 
       <q-tabs
+          v-model="tab"
           align="justify"
           class="bg-grey-3"
       >
@@ -97,13 +100,24 @@ function reset() {
         />
 
         <q-btn
+            class="q-px-lg q-py-sm"
+            padding="10"
             label="Verify"
             type="submit"
             icon="done_all"
             color="secondary"
             :loading="loading"
             @click.prevent="verify"
-        />
+        >
+          <template v-slot:loading>
+            <q-spinner-hourglass class="on-left"/>
+            Verifying...
+          </template>
+          <!--          <template v-slot:loading>-->
+          <!--            <q-icon name="verified"/>-->
+          <!--            Verifying...-->
+          <!--          </template>-->
+        </q-btn>
       </q-form>
 
       <template v-if="verifyResult[0] === true" class="q-pa-md q-gutter-sm">
