@@ -75,8 +75,8 @@ async function setDates() {
 }
 
 async function generateVp() {
-
   loading.value = true
+
   if (minDate.value > model.value.from || model.value.from > maxDate.value
       || model.value.to > maxDate.value || model.value.to < minDate.value) {
     loading.value = false
@@ -102,16 +102,16 @@ async function generateVp() {
 }
 
 function allowableRange() {
-
   let max = selectedVcs.value[0].validFrom
   let min = selectedVcs.value[0].validTo
+
   for (let i = 1, len = selectedVcs.value.length; i < len; i++) {
     let v1 = selectedVcs.value[i].validFrom
     let v2 = selectedVcs.value[i].validTo
-
     max = (v1 > max) ? v1 : max
     min = (v2 < min) ? v2 : min
   }
+
   minDate.value = formatting.timestampToStringDate(max.toNumber())
   maxDate.value = formatting.timestampToStringDate(min.toNumber())
 
@@ -303,8 +303,8 @@ function openDeleteDialog() {
             color="secondary"
             @click="setDates"
             :loading="loading"
-            style="width: 150px;"
         >
+          <q-icon name="settings_suggest" style="margin-right: 5px;"></q-icon>
           Generate VP
 
           <template v-slot:loading>
@@ -487,13 +487,14 @@ function openDeleteDialog() {
             label="Delete"
             type="Delete"
             color="red"
+            icon-right="delete_forever"
             :loading="deleting"
             @click="openDeleteDialog"
             style="margin-left: 5px; width: 130px;"
         >
           <template v-slot:loading>
-            <q-spinner class="on-left"/>
             Deleting...
+            <q-spinner class="on-right" />
           </template>
 
           <q-popup-proxy v-if="!store.getters.account">
