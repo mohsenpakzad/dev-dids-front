@@ -186,6 +186,7 @@ function openDeleteDialog() {
           grid
           hide-header
           :filter="searchFilter"
+
       >
         <template v-slot:top-right>
           <q-input
@@ -425,7 +426,8 @@ function openDeleteDialog() {
                 <div class="dialog_info_items1">Validity</div>
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
-                  From {{ generatedVp[0].validFrom }} To {{ generatedVp[0].validTo }}
+                  From {{ formatting.timestampToStringDate(generatedVp[0].validFrom.toNumber()) }} To
+                  {{ formatting.timestampToStringDate(generatedVp[0].validTo.toNumber())}}
                 </div>
               </q-item>
               <!-- Date Ends -->
