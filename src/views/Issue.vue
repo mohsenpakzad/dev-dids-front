@@ -24,7 +24,6 @@ const issueForm = reactive({
 
 const tab = ref('Issues')
 const vcId = ref(0)
-const selectedVc = ref(0)
 const vcStat = ref(false)
 
 const columns = ref([
@@ -48,6 +47,7 @@ const prompt = ref(false)
 const alert = ref(false)
 const error_kind = ref('')
 const loading = ref(false)
+const selectedVc = ref(null)
 
 
 async function issue() {
@@ -75,12 +75,19 @@ async function issue() {
       )
       const recipient = await issueTxn.wait()
       console.log(recipient)
+
+      await store.dispatch('fetchUserIssuedVcs')
     } catch (err) {
       console.log(err)
     } finally {
       loading.value = false
     }
   }
+}
+
+function openDialog(vc: any) {
+  dialog.value = true
+  selectedVc.value = vc
 }
 
 function assignVcId(thisVcId: number) {
@@ -314,15 +321,15 @@ function reset() {
             >
               <template v-slot:body="props">
                 <q-tr :props="props" class="revoked1">
-                  <q-td key="holder" :props="props" class="table_data" @click="dialog = true">
-                    {{ props.row.holder }}
+                  <q-td key="holder" :props="props" class="table_data" @click="openDialog(props.row)">
+                    {{ formatting.simplifyAddress(props.row.holder) }}
                   </q-td>
-                  <q-td key="subject" :props="props" class="table_data" @click="dialog = true">
+                  <q-td key="subject" :props="props" class="table_data" @click="openDialog(props.row)">
                     <q-badge color="green" class="table_badge">
                       {{ props.row.subject }}
                     </q-badge>
                   </q-td>
-                  <q-td key="data" :props="props" class="table_data" @click="dialog = true">
+                  <q-td key="data" :props="props" class="table_data" @click="openDialog(props.row)">
                     {{ props.row.data }}
                   </q-td>
                   <q-td key="more" :props="props" class="table_data" v-if="props.row.suspended == true">
@@ -360,7 +367,7 @@ function reset() {
                     </q-item-section>
                     <div class="dialog_info_items1">Holder</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3"></div>
+                    <div class="dialog_info_items3">{{ selectedVc.holder }}</div>
                   </q-item>
                   <!-- Holder Ends -->
 
@@ -373,7 +380,7 @@ function reset() {
                     </q-item-section>
                     <div class="dialog_info_items1">Subject</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">Employment</div>
+                    <div class="dialog_info_items3">{{ selectedVc.subject }}</div>
                   </q-item>
                   <!-- Subject Ends -->
 
@@ -386,7 +393,7 @@ function reset() {
                     </q-item-section>
                     <div class="dialog_info_items1">Data</div>
                     <div class="dialog_info_items2">:</div>
-                    <div class="dialog_info_items3">0xF28122CA</div>
+                    <div class="dialog_info_items3">{{ selectedVc.data }}</div>
                   </q-item>
                   <!-- Data Ends -->
 
@@ -403,11 +410,11 @@ function reset() {
                       From
                       <span
                           style="color:green; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
-                        26/12/2021
+                        {{ formatting.timestampToStringDate(selectedVc.validFrom.toNumber()) }}
                       </span>
                       To
                       <span style="color:crimson; font-weight:700; display:inline-block; padding:0 2px 0 2px;">
-                        26/12/2022
+                        {{ formatting.timestampToStringDate(selectedVc.validTo.toNumber()) }}
                       </span>
                     </div>
                   </q-item>
