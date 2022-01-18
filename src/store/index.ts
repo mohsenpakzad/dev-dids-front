@@ -209,7 +209,7 @@ const store = createStore<State>({
                 const myVc = await devDIDs.getVc(vcIds[i])
                 vcs.push({...myVc, id: vcIds[i]})
             }
-            commit('setUserHeldVcs', vcs)
+            commit('setUserHeldVcs', vcs.reverse())
 
             commit('setLoadingHeldVcs', false)
         },
@@ -228,7 +228,7 @@ const store = createStore<State>({
                 const myVc = await devDIDs.getVc(vcIds[i])
                 vcs.push({...myVc, id: vcIds[i]})
             }
-            commit('setUserIssuedVcs', vcs)
+            commit('setUserIssuedVcs', vcs.reverse())
 
             commit('setLoadingIssuedVcs', false)
         }
