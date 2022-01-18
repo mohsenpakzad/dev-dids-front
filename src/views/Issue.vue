@@ -308,7 +308,19 @@ function reset() {
           </q-card-section>
 
           <div class="q-pa-md table_container">
+
+            <div
+                v-if="store.getters.loadingIssuedVcs"
+                class="row justify-center q-pa-xl"
+            >
+              <q-spinner
+                  color="pink"
+                  size="3em"
+              />
+            </div>
+
             <q-table
+                v-else
                 style="
                     max-width:1000px !important;
                     width:95% !important;

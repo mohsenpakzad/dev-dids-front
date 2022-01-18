@@ -177,7 +177,18 @@ function openDeleteDialog() {
         Your Verifiable Credentials
       </q-card-section>
 
+      <div
+          v-if="store.getters.loadingHeldVcs"
+          class="row justify-center q-pa-xl"
+      >
+        <q-spinner
+            color="pink"
+            size="3em"
+        />
+      </div>
+
       <q-table
+          v-else
           class="q-pa-md"
           :rows="store.getters.userHeldVcs"
           :columns="columns"
@@ -427,7 +438,7 @@ function openDeleteDialog() {
                 <div class="dialog_info_items2">:</div>
                 <div class="dialog_info_items3">
                   From {{ formatting.timestampToStringDate(generatedVp[0].validFrom.toNumber()) }} To
-                  {{ formatting.timestampToStringDate(generatedVp[0].validTo.toNumber())}}
+                  {{ formatting.timestampToStringDate(generatedVp[0].validTo.toNumber()) }}
                 </div>
               </q-item>
               <!-- Date Ends -->
@@ -496,7 +507,7 @@ function openDeleteDialog() {
         >
           <template v-slot:loading>
             Deleting...
-            <q-spinner class="on-right" />
+            <q-spinner class="on-right"/>
           </template>
 
           <q-popup-proxy v-if="!store.getters.account">

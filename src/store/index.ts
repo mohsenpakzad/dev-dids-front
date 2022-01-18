@@ -13,6 +13,8 @@ export type State = {
     devDIDs: DevDIDs | null,
     userHeldVcs: any[],
     userIssuedVcs: any[],
+    loadingHeldVcs: boolean,
+    loadingIssuedVcs: boolean,
 }
 
 const store = createStore<State>({
@@ -22,6 +24,8 @@ const store = createStore<State>({
         devDIDs: null,
         userHeldVcs: [],
         userIssuedVcs: [],
+        loadingHeldVcs: false,
+        loadingIssuedVcs: false
     }),
     getters: {
         account: (state): string | null => state.account,
@@ -29,6 +33,8 @@ const store = createStore<State>({
         devDIDs: (state): DevDIDs | null => state.devDIDs,
         userHeldVcs: (state): any[] => state.userHeldVcs,
         userIssuedVcs: (state): any[] => state.userIssuedVcs,
+        loadingHeldVcs: (state): boolean => state.loadingHeldVcs,
+        loadingIssuedVcs: (state): boolean => state.loadingIssuedVcs,
     },
     mutations: {
         setAccount(state, account) {
@@ -45,6 +51,12 @@ const store = createStore<State>({
         },
         setUserIssuedVcs(state, userIssuedVcs) {
             state.userIssuedVcs = userIssuedVcs
+        },
+        setLoadingHeldVcs(state, loadingHeldVcs) {
+            state.loadingHeldVcs = loadingHeldVcs
+        },
+        setLoadingIssuedVcs(state, loadingIssuedVcs) {
+            state.loadingIssuedVcs = loadingIssuedVcs
         }
     },
     actions: {
@@ -183,6 +195,8 @@ const store = createStore<State>({
             dispatch('fetchUserIssuedVcs')
         },
         async fetchUserHeldVcs({getters, commit}) {
+            commit('setLoadingHeldVcs', true)
+
             const devDIDs = getters.devDIDs as DevDIDs
 
             const vcIds = await devDIDs.vcsOfHolder(getters.account)
@@ -196,8 +210,12 @@ const store = createStore<State>({
                 vcs.push({...myVc, id: vcIds[i]})
             }
             commit('setUserHeldVcs', vcs)
+
+            commit('setLoadingHeldVcs', false)
         },
         async fetchUserIssuedVcs({getters, commit}) {
+            commit('setLoadingIssuedVcs', true)
+
             const devDIDs = getters.devDIDs as DevDIDs
 
             const vcIds = await devDIDs.vcsOfIssuer(getters.account)
@@ -211,6 +229,8 @@ const store = createStore<State>({
                 vcs.push({...myVc, id: vcIds[i]})
             }
             commit('setUserIssuedVcs', vcs)
+
+            commit('setLoadingIssuedVcs', false)
         }
     }
 })
