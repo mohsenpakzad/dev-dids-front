@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useStore } from './store'
 import { useFormatting } from './composables/useFormatting'
 
 const store = useStore()
@@ -18,15 +18,15 @@ const menuItems = ref([
 ])
 
 const connectAddress = computed(() => {
-  return `Connected to ${formatting.simplifyAddress(store.getters.account)}`
+  return `Connected to ${formatting.simplifyAddress(store.account!)}`
 })
 
 async function connectWallet() {
-  await store.dispatch('connectWallet')
+  await store.connectWallet()
 }
 
 onBeforeMount(async () => {
-  await store.dispatch('readOnlyConnect')
+  await store.readOnlyConnect()
 })
 </script>
 
@@ -83,7 +83,7 @@ onBeforeMount(async () => {
       </q-toolbar-title>
 
       <q-btn
-          v-if="!store.getters.account"
+          v-if="!store.account"
           class="q-mr-md"
           rounded
           color="pink"

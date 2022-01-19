@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useStore } from 'vuex'
+import { useStore } from '../store'
 import { useEthereum } from '../composables/useEthereum'
 import { useFieldRules } from '../composables/useFieldRules'
 import { useFormatting } from '../composables/useFormatting'
@@ -52,9 +52,9 @@ const selectedVc = ref(null)
 
 async function issue() {
 
-  if (!store.getters.account) return
+  if (!store.account) return
 
-  if (store.getters.account.toLowerCase() == issueForm.holder.toLowerCase()) {
+  if (store.account.toLowerCase() == issueForm.holder.toLowerCase()) {
     alert.value = true
     error_kind.value = '1'
     issueForm.holder = ''
@@ -76,7 +76,7 @@ async function issue() {
       const recipient = await issueTxn.wait()
       console.log(recipient)
 
-      await store.dispatch('fetchUserIssuedVcs')
+      await store.fetchUserIssuedVcs()
     } catch (err) {
       console.log(err)
     } finally {
@@ -105,14 +105,14 @@ async function revoke(thisVcId: number) {
   const tnx = await ethereum.devDIDs().revoke(thisVcId)
   await tnx.wait()
 
-  await store.dispatch('fetchUserIssuedVcs')
+  await store.fetchUserIssuedVcs()
 }
 
 async function changeVcStat(thisVcId: number, thisVcStat: boolean) {
   const tnx = await ethereum.devDIDs().setSuspended(thisVcId, thisVcStat)
   await tnx.wait()
 
-  await store.dispatch('fetchUserIssuedVcs')
+  await store.fetchUserIssuedVcs()
 }
 
 function reset() {
@@ -258,7 +258,7 @@ function reset() {
                 Issuing...
               </template>
 
-              <q-popup-proxy v-if="!store.getters.account">
+              <q-popup-proxy v-if="!store.account">
                 <BannerConnectWallet/>
               </q-popup-proxy>
 
@@ -310,7 +310,7 @@ function reset() {
           <div class="q-pa-md table_container">
 
             <div
-                v-if="store.getters.loadingIssuedVcs"
+                v-if="store.loadingIssuedVcs"
                 class="row justify-center q-pa-xl"
             >
               <q-spinner
@@ -327,7 +327,7 @@ function reset() {
                     margin:0 auto 0 !important;"
                 flat
                 :table-header-style="{ fontSize: '30px !important' }"
-                :rows="store.getters.userIssuedVcs"
+                :rows="store.userIssuedVcs"
                 :columns="columns"
                 row-key="name"
             >

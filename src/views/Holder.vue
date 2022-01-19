@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStore } from 'vuex'
+import { useStore } from '../store'
 import { useEthereum } from '../composables/useEthereum'
 import { BigNumber } from 'ethers'
 import { useFormatting } from '../composables/useFormatting'
@@ -68,7 +68,7 @@ function copy() {
 }
 
 async function setDates() {
-  if (!store.getters.account) return
+  if (!store.account) return
 
   await allowableRange()
   setVpDateDialog.value = true
@@ -129,7 +129,7 @@ async function deleteVcs() {
       const recipient = await deleteTxn.wait()
       console.log(recipient)
     }
-    await store.dispatch('fetchUserHeldVcs')
+    await store.fetchUserHeldVcs()
   } catch (err) {
     console.log(err)
   } finally {
@@ -138,7 +138,7 @@ async function deleteVcs() {
 }
 
 function openDeleteDialog() {
-  if (!store.getters.account || selectedVcs.value.length === 0) return
+  if (!store.account || selectedVcs.value.length === 0) return
   confirmDeleteDialog.value = true
 }
 </script>
@@ -178,7 +178,7 @@ function openDeleteDialog() {
       </q-card-section>
 
       <div
-          v-if="store.getters.loadingHeldVcs"
+          v-if="store.loadingHeldVcs"
           class="row justify-center q-pa-xl"
       >
         <q-spinner
@@ -190,7 +190,7 @@ function openDeleteDialog() {
       <q-table
           v-else
           class="q-pa-md"
-          :rows="store.getters.userHeldVcs"
+          :rows="store.userHeldVcs"
           :columns="columns"
           row-key="id"
           selection="multiple"
@@ -324,7 +324,7 @@ function openDeleteDialog() {
             Generating...
           </template>
 
-          <q-popup-proxy v-if="!store.getters.account">
+          <q-popup-proxy v-if="!store.account">
             <BannerConnectWallet/>
           </q-popup-proxy>
         </q-btn>
@@ -408,7 +408,7 @@ function openDeleteDialog() {
 
                 <div class="dialog_info_items1">Holder</div>
                 <div class="dialog_info_items2">:</div>
-                <div class="dialog_info_items3">{{ formatting.formatLongStrings(store.getters.account) }}</div>
+                <div class="dialog_info_items3">{{ formatting.formatLongStrings(store.account) }}</div>
               </q-item>
               <!-- Holder Ends -->
 
@@ -510,7 +510,7 @@ function openDeleteDialog() {
             <q-spinner class="on-right"/>
           </template>
 
-          <q-popup-proxy v-if="!store.getters.account">
+          <q-popup-proxy v-if="!store.account">
             <BannerConnectWallet/>
           </q-popup-proxy>
         </q-btn>

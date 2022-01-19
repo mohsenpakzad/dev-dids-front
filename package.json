@@ -12,10 +12,10 @@
     "@metamask/providers": "^8.1.1",
     "@quasar/extras": "^1.12.2",
     "ethers": "^5.5.2",
+    "pinia": "^2.0.9",
     "quasar": "^2.4.0",
     "vue": "^3.2.23",
-    "vue-router": "^4.0.12",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.0.12"
   },
   "devDependencies": {
     "@quasar/vite-plugin": "^1.0.3",
