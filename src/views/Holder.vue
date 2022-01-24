@@ -215,7 +215,6 @@ function openDeleteDialog() {
 
         <template v-slot:item="props">
 
-
           <div
               class="q-pa-lg grid-style-transition center_horizon"
               :style="props.selected ? 'transform: scale(0.95);' : ''"
@@ -543,12 +542,12 @@ function openDeleteDialog() {
 </template>
 
 
-<style lang="sass">
+<style lang="sass" scoped>
 .grid-style-transition
   transition: transform .28s, background-color .28s
 </style>
 
-<style>
+<style scoped>
 .div_issuer_header {
   margin: 30px 0 0 0 !important;
   font-size: 1.71428571rem;
