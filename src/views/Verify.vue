@@ -3,10 +3,48 @@ import { ref, reactive } from 'vue'
 import { useEthereum } from '../composables/useEthereum'
 import { useFieldRules } from '../composables/useFieldRules'
 import { useUtils } from '../composables/useUtils'
+import { useFormatting } from '../composables/useFormatting'
+
+import { BigNumber } from 'ethers'
 
 const ethereum = useEthereum()
 const fieldRules = useFieldRules()
 const utils = useUtils()
+const formatting = useFormatting()
+
+
+const columns = [
+  {
+    name: 'subject',
+    required: true,
+    label: 'subject',
+    align: 'left',
+    field: 'subject'
+  },
+  {
+    name: 'issuer',
+    align: 'center',
+    label: 'Issuer',
+    field: 'issuer',
+    sortable: true
+  },
+  {
+    name: 'data',
+    label: 'Data',
+    field: 'data',
+    sortable: true
+  },
+  {
+    name: 'validFrom',
+    label: 'Issuance Date',
+    field: (row: any) => formatting.timestampToStringDate(row.validFrom.toNumber())
+  },
+  {
+    name: 'validTo',
+    label: 'Expiration Date',
+    field: (row: any) => formatting.timestampToStringDate(row.validTo.toNumber())
+  }
+]
 
 const verifyForm = reactive({
   base64Vp: '',
@@ -16,6 +54,19 @@ const verifyForm = reactive({
 const loading = ref(false)
 const tab = ref('verify')
 const verifyResult = ref<Array<string | boolean>>([])
+const verifiedVcs = ref<any>([])
+
+async function getVcs(vcIds: BigNumber[]) {
+  const devDIDs = ethereum.devDIDs()
+
+  verifiedVcs.value = []
+  for (let i = 0; i < vcIds.length; i++) {
+    if (vcIds[i].isZero()) continue
+
+    const myVc = await devDIDs.getVc(vcIds[i])
+    verifiedVcs.value.push({...myVc, id: vcIds[i]})
+  }
+}
 
 async function verify() {
   loading.value = true
@@ -26,6 +77,11 @@ async function verify() {
         verifyForm.holderAddress,
         utils.getCurrentTimestamp()
     )
+
+    // parse verified vcs
+    const stringVp = atob(verifyForm.base64Vp)
+    const vp = JSON.parse(stringVp)
+    await getVcs(vp[0].map((e: any) => BigNumber.from(e)))
   } catch (err) {
     console.log(err)
   } finally {
@@ -34,7 +90,6 @@ async function verify() {
 }
 
 function reset() {
-
   verifyForm.base64Vp = ''
   verifyForm.holderAddress = ''
   verifyResult.value = []
@@ -100,7 +155,7 @@ function reset() {
         />
 
         <q-btn
-            class="q-px-lg q-py-sm"
+            class="q-px-lg q-py-sm btn_verifier"
             padding="10"
             label="Verify"
             type="submit"
@@ -121,6 +176,7 @@ function reset() {
       </q-form>
 
       <template v-if="verifyResult[0] === true" class="q-pa-md q-gutter-sm">
+
         <q-banner inline-actions class="bg-grey-3">
 
           <template v-slot:avatar>
@@ -132,8 +188,108 @@ function reset() {
           <template v-slot:action>
             <q-btn flat label="Reset Form" @click="reset"/>
           </template>
-
         </q-banner>
+
+        <q-table
+            class="q-pa-md"
+            title="Verified Vcs"
+            :rows="verifiedVcs"
+            :columns="columns"
+            row-key="id"
+            grid
+            hide-header
+        >
+
+          <template v-slot:item="props" class="card_container1">
+
+            <div
+                class="q-pa-lg grid-style-transition center_horizon card_container2"
+                :style="props.selected ? 'transform: scale(0.95);' : ''"
+            >
+              <q-card :class="props.selected ? 'bg-grey-2 card_container3' : 'card_container3'">
+
+                <q-card-section>
+                  {{ props.row.subject }}
+                </q-card-section>
+
+                <q-separator/>
+
+                <q-list dense class="card_container2">
+
+                  <q-item
+                      v-for="col in props.cols"
+                      :key="col.name"
+                  >
+
+                    <q-item-section>
+
+                      <q-item-label>
+                        <q-icon
+                            rounded
+                            color="blue-grey-4"
+                            size="25px"
+                            name="title"
+                            v-if="col.label === 'Data'"
+                        />
+                        <q-icon
+                            rounded
+                            color="teal-5"
+                            size="25px"
+                            name="verified"
+                            v-else-if="col.label === 'Issuer'"
+                        />
+                        <q-icon
+                            rounded
+                            color="accent"
+                            size="25px"
+                            name="subject"
+                            v-else-if="col.label === 'subject'"
+                        />
+                        <q-icon
+                            rounded
+                            color="green-6"
+                            size="25px"
+                            name="today"
+                            v-else-if="col.label === 'Issuance Date'"
+                        />
+                        <q-icon
+                            rounded
+                            style="color:#F31E48"
+                            size="25px"
+                            name="today"
+                            v-if="col.label === 'Expiration Date'"
+                        />
+                        {{ col.label }}
+                      </q-item-label>
+                    </q-item-section>
+
+                    <q-item-section side>
+                      <q-item-label
+                          caption
+                          style="padding:11px 0 11px 0 !important;"
+                          v-if="col.label === 'Issuer'"
+                      >
+                        {{ formatting.formatLongStrings(col.value) }}
+                      </q-item-label>
+                      <q-item-label
+                          caption
+                          style="padding:11px 0 11px 0 !important;"
+                          v-else
+                      >
+                        {{ col.value }}
+                      </q-item-label>
+                    </q-item-section>
+
+                  </q-item>
+                </q-list>
+
+              </q-card>
+            </div>
+
+          </template>
+
+        </q-table>
+
       </template>
 
       <template v-else-if="verifyResult[0] === false" class="q-pa-md q-gutter-sm">
@@ -157,14 +313,6 @@ function reset() {
 </template>
 
 <style scoped>
-* {
-  text-align: center;
-}
-
-.ui.raised.segment {
-  -webkit-box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
-  box-shadow: 0 2px 4px 0 rgb(34 36 38 / 12%), 0 2px 10px 0 rgb(34 36 38 / 15%);
-}
 
 .div_issuer_header {
   margin: 30px 0 0 0 !important;
@@ -172,10 +320,25 @@ function reset() {
   line-height: 1.28571429em;
   font-weight: 500;
   padding: 0;
+  text-align: center !important;
+}
+
+.btn_verifier {
+  display: block !important;
+  margin: 20px auto 0 !important;
 }
 
 .the_form {
   padding: 30px !important;
+}
+
+.card_container1 {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.card_container2 {
+  margin: 0 auto 0 !important;
 }
 
 </style>
